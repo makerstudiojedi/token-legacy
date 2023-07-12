@@ -1,0 +1,15 @@
+.Navbar {
+  @apply sticky top-0 left-0 bg-background z-50;
+
+  nav {
+    @apply container py-8 flex items-center justify-between;
+
+    ul {
+      @apply flex items-center gap-8;
+
+      li {
+        @apply flex-shrink-0;
+      }
+    }
+  }
+}

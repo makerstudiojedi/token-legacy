@@ -1,0 +1,61 @@
+$scrollbar-width: 4px;
+$scrollbar-color: #ffe3d4;
+$scrollbar-thumb-color: #ff9152;
+$scrollbar-thumb-hover-color: #ff9152;
+
+.BeneficiariesList {
+  @apply p-4 rounded-2xl overflow-hidden bg-backgroundDarker overflow-y-auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: $scrollbar-color $scrollbar-thumb-color;
+
+  &::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $scrollbar-color;
+    border-radius: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $scrollbar-thumb-color;
+    border-radius: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: $scrollbar-thumb-hover-color;
+  }
+
+  .Beneficiary {
+    .Beneficiary__inner {
+      @apply pt-4 pb-4 hover:opacity-70 cursor-pointer transition;
+    }
+
+    &:first-child {
+      .Beneficiary__inner {
+        @apply pt-0;
+      }
+    }
+
+    &:last-child {
+      .Beneficiary__inner {
+        @apply pb-0;
+      }
+
+      .line {
+        @apply hidden;
+      }
+    }
+  }
+}
+
+.Beneficiary {
+  .Beneficiary__inner {
+    @apply flex items-center justify-between;
+  }
+
+  .line {
+    @apply h-[1px] w-full;
+  }
+}

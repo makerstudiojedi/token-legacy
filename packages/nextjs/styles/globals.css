@@ -1,32 +1,33 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root,
-[data-theme] {
-  background: hsl(var(--b2));
+h1 {
+  font-size: 48px;
+  line-height: 65px;
 }
 
-body {
-  min-height: 100vh;
+h2 {
+  font-size: 36px;
+  line-height: 20px;
 }
 
-h1,
-h2,
-h3,
+h3 {
+  font-size: 32px;
+  line-height: 20px;
+}
+
 h4 {
-  margin-bottom: 0.5rem;
-  line-height: 1;
+  font-size: 24px;
+  line-height: normal;
 }
 
-p {
-  margin: 1rem 0;
+h5 {
+  font-size: 14px;
+  line-height: 20px;
 }
 
-.btn {
-  @apply shadow-md;
-}
-
-.btn.btn-ghost {
-  @apply shadow-none;
+h6 {
+  font-size: 12px;
+  line-height: 20px;
 }

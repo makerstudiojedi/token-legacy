@@ -1,0 +1,9 @@
+.EditableField {
+  @apply flex items-center justify-center py-2 rounded bg-backgroundDark cursor-text select-none;
+
+  input {
+    @apply bg-transparent border-none max-w-[4rem] text-right outline-none font-bold p-0;
+
+    font-size: 32px;
+  }
+}
