@@ -2,12 +2,17 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import homeBg from "../../public/home-bg.svg";
+import { ConnectButton, useAccountModal } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
+import { isAddress } from "viem";
+import { useAccount } from "wagmi";
 import Logo from "~~/components/Logo/Logo";
 import { Button } from "~~/components/ui/button";
 
 const HomePage: NextPage = (): JSX.Element => {
-  const [isWalletConnected, setIsWalletConnected] = useState<boolean>(false);
+  const { address } = useAccount();
+  const isWalletConnected = isAddress(address);
+  const { openAccountModal } = useAccountModal();
 
   const router = useRouter();
 
@@ -193,7 +198,7 @@ const HomePage: NextPage = (): JSX.Element => {
 
           <div className="px-3">
             {isWalletConnected ? (
-              <h5>To start using TokenLegacy, we will be charging a premium.</h5>
+              <h5>To start using TokenLegacy, you need to deploy your will.</h5>
             ) : (
               <h5>Connect wallet address to continue</h5>
             )}
@@ -201,27 +206,36 @@ const HomePage: NextPage = (): JSX.Element => {
 
           <div className="mt-5">
             {isWalletConnected ? (
-              <Button className="w-full" onClick={() => router.push("/wallet")}>
-                <span>0.008 ETH</span>
+              <>
+                <Button className="w-full" onClick={() => router.push("/token-legacy/wallet")}>
+                  <span>Deploy Will</span>
 
-                <svg width={25} height={25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M3.5 19.9276V4.92764C3.5 4.37536 3.94772 3.92764 4.5 3.92764H13.5C14.0523 3.92764 14.5 4.37536 14.5 4.92764V12.9276H16.5C17.6046 12.9276 18.5 13.823 18.5 14.9276V18.9276C18.5 19.4799 18.9477 19.9276 19.5 19.9276C20.0523 19.9276 20.5 19.4799 20.5 18.9276V11.9276H18.5C17.9477 11.9276 17.5 11.4799 17.5 10.9276V7.34185L15.8431 5.685L17.2574 4.27079L22.2071 9.22053C22.4024 9.4158 22.5 9.67172 22.5 9.92764V18.9276C22.5 20.5845 21.1569 21.9276 19.5 21.9276C17.8431 21.9276 16.5 20.5845 16.5 18.9276V14.9276H14.5V19.9276H15.5V21.9276H2.5V19.9276H3.5ZM5.5 5.92764V11.9276H12.5V5.92764H5.5Z"
-                    fill="white"
-                  />
-                </svg>
-              </Button>
+                  <svg width={25} height={25} viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M3.5 19.9276V4.92764C3.5 4.37536 3.94772 3.92764 4.5 3.92764H13.5C14.0523 3.92764 14.5 4.37536 14.5 4.92764V12.9276H16.5C17.6046 12.9276 18.5 13.823 18.5 14.9276V18.9276C18.5 19.4799 18.9477 19.9276 19.5 19.9276C20.0523 19.9276 20.5 19.4799 20.5 18.9276V11.9276H18.5C17.9477 11.9276 17.5 11.4799 17.5 10.9276V7.34185L15.8431 5.685L17.2574 4.27079L22.2071 9.22053C22.4024 9.4158 22.5 9.67172 22.5 9.92764V18.9276C22.5 20.5845 21.1569 21.9276 19.5 21.9276C17.8431 21.9276 16.5 20.5845 16.5 18.9276V14.9276H14.5V19.9276H15.5V21.9276H2.5V19.9276H3.5ZM5.5 5.92764V11.9276H12.5V5.92764H5.5Z"
+                      fill="white"
+                    />
+                  </svg>
+                </Button>
+                <div className="mt-2" onClick={openAccountModal}>
+                  Change wallet
+                </div>
+              </>
             ) : (
-              <Button className="w-full" onClick={() => setIsWalletConnected(true)}>
-                <span>Connect wallet</span>
+              <ConnectButton.Custom>
+                {({ openConnectModal }) => (
+                  <Button className="w-full" onClick={openConnectModal}>
+                    <span>Connect wallet</span>
 
-                <svg width={20} height={20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1.67075 7.5H17.5041C17.9643 7.5 18.3374 7.8731 18.3374 8.33333V16.6667C18.3374 17.1269 17.9643 17.5 17.5041 17.5H2.50408C2.04385 17.5 1.67075 17.1269 1.67075 16.6667V7.5ZM2.50408 2.5H15.0041V5.83333H1.67075V3.33333C1.67075 2.8731 2.04385 2.5 2.50408 2.5ZM12.5041 11.6667V13.3333H15.0041V11.6667H12.5041Z"
-                    fill="white"
-                  />
-                </svg>
-              </Button>
+                    <svg width={20} height={20} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1.67075 7.5H17.5041C17.9643 7.5 18.3374 7.8731 18.3374 8.33333V16.6667C18.3374 17.1269 17.9643 17.5 17.5041 17.5H2.50408C2.04385 17.5 1.67075 17.1269 1.67075 16.6667V7.5ZM2.50408 2.5H15.0041V5.83333H1.67075V3.33333C1.67075 2.8731 2.04385 2.5 2.50408 2.5ZM12.5041 11.6667V13.3333H15.0041V11.6667H12.5041Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </Button>
+                )}
+              </ConnectButton.Custom>
             )}
           </div>
         </div>

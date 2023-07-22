@@ -9,6 +9,8 @@ contract LegacyFactory is Ownable {
 	address public implementationAddress;
 	uint256 public fee;
 
+	mapping(address => address) public userWill;
+
 	event ImplementationUpdated(address oldImp, address newImp);
 	event LegacyCreated(address owner, address legacy);
 
@@ -26,6 +28,11 @@ contract LegacyFactory is Ownable {
 	}
 
 	function createLegacy() public payable returns (address) {
+		require(
+			userWill[msg.sender] == address(0),
+			"You already have a will deployed"
+		);
+
 		if (fee > 0) {
 			require(msg.value >= fee, "Not enough token sent for fees");
 		}

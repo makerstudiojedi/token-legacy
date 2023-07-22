@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-// import "@rainbow-me/rainbowkit/styles.css";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
 import NextNProgress from "nextjs-progressbar";
 import { WagmiConfig } from "wagmi";
+// import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Toaster } from "~~/components/ui/toaster";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
@@ -27,7 +28,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   return (
     <WagmiConfig config={wagmiConfig}>
       <NextNProgress />
-      <RainbowKitProvider chains={appChains.chains} avatar={BlockieAvatar}>
+      <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
         <div className="flex flex-col min-h-screen">
           {/* <Header /> */}
           <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
