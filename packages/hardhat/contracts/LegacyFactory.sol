@@ -1,0 +1,48 @@
+//SPDX-License-Identifier: MIT
+pragma solidity ^0.8.3;
+
+import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { LegacyImplementation } from "./LegacyImplementation.sol";
+
+contract LegacyFactory is Ownable {
+	address public implementationAddress;
+	uint256 public fee;
+
+	event ImplementationUpdated(address oldImp, address newImp);
+	event LegacyCreated(address owner, address legacy);
+
+	// constructor() {
+	// 	LegacyImplementation implementation = new LegacyImplementation();
+	// 	implementation.initialize(msg.sender);
+	// 	implementationAddress = address(implementation);
+	// }
+
+	function setImplementationAddress(address imp) public onlyOwner {
+		address oldImp = implementationAddress;
+		implementationAddress = imp;
+
+		emit ImplementationUpdated(oldImp, imp);
+	}
+
+	function createLegacy() public payable returns (address) {
+		if (fee > 0) {
+			require(msg.value >= fee, "Not enough token sent for fees");
+		}
+
+		bytes memory data = abi.encodeWithSignature(
+			"initialize(address)",
+			msg.sender
+		);
+		address clone = Clones.cloneDeterministic(
+			implementationAddress,
+			keccak256(data)
+		);
+		(bool success, ) = clone.call(data);
+		require(success, "Factory: Initialization failed");
+
+		emit LegacyCreated(msg.sender, clone);
+
+		return clone;
+	}
+}

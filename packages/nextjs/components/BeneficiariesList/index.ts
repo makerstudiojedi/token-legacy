@@ -1,2 +1,2 @@
-export { default as BeneficiariesList } from "./BeneficiariesList"
-export { default as Beneficiary } from "./Beneficiary"
+export { default as BeneficiariesList } from "./BeneficiariesList";
+export { default as Beneficiary } from "./Beneficiary";

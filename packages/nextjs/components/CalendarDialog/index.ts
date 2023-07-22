@@ -1,1 +1,1 @@
-export { default as CalendarDialog } from "./CalendarDialog"
+export { default as CalendarDialog } from "./CalendarDialog";
