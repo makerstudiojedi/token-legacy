@@ -6,7 +6,7 @@ interface LogoProps {
   onClick?: () => void;
 }
 
-const Logo: React.FC<LogoProps> = ({ className, onClick }): JSX.Element => {
+const Logo = ({ className, onClick }: LogoProps) => {
   const logoClasses = cn(styles.Logo, className);
 
   return (
