@@ -4,6 +4,7 @@ import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import NextNProgress from "nextjs-progressbar";
 import { WagmiConfig } from "wagmi";
+import DevAccount from "~~/components/DevAccount";
 // import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Toaster } from "~~/components/ui/toaster";
@@ -38,6 +39,7 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
         </div>
 
         <Toaster />
+        <DevAccount />
         {/* <Toaster /> */}
       </RainbowKitProvider>
     </WagmiConfig>
