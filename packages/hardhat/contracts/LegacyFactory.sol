@@ -12,7 +12,7 @@ contract LegacyFactory is Ownable {
 	mapping(address => address) public userWill;
 
 	event ImplementationUpdated(address oldImp, address newImp);
-	event LegacyCreated(address owner, address legacy);
+	event LegacyCreated(address indexed owner, address indexed legacy);
 
 	// constructor() {
 	// 	LegacyImplementation implementation = new LegacyImplementation();
@@ -47,6 +47,8 @@ contract LegacyFactory is Ownable {
 		);
 		(bool success, ) = clone.call(data);
 		require(success, "Factory: Initialization failed");
+
+		userWill[msg.sender] = clone;
 
 		emit LegacyCreated(msg.sender, clone);
 
