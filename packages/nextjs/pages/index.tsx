@@ -1,65 +1,129 @@
-import Link from "next/link";
+import { useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import homeBg from "../public/home-bg.svg";
+import walletSvg from "../public/wallet.svg";
+import walletConnectedSvg from "../public/walletConnected.svg";
+import walletNotConnectedSvg from "../public/walletNotConnected.svg";
+import { ConnectButton, useAccountModal } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { MetaHeader } from "~~/components/MetaHeader";
+// import gesFeeSvg from "../public/gas-fee.svg";
+import { decodeEventLog, isAddress, parseAbi, zeroAddress } from "viem";
+import { useAccount } from "wagmi";
+import Icon from "~~/components/Icons";
+import IsMountedWrapper from "~~/components/IsMountedWrapper";
+import Logo from "~~/components/Logo/Logo";
+import { Button } from "~~/components/ui/button";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
-const Home: NextPage = () => {
+const HomePage: NextPage = (): JSX.Element => {
+  const { address } = useAccount();
+
+  const isWalletConnected = isAddress(address as string);
+
+  const { openAccountModal } = useAccountModal();
+
+  const router = useRouter();
+
+  // create a new legacy contract using Factory contract
+  const { writeAsync: createLegacy } = useScaffoldContractWrite({
+    contractName: "LegacyFactory",
+    functionName: "createLegacy",
+    value: "0",
+    onBlockConfirmation(txnReceipt) {
+      // interact with the transaction receipt
+      const [legacyEvent] = txnReceipt.logs;
+
+      // decode event log from transaction
+      const { args } = decodeEventLog({
+        abi: parseAbi(["event LegacyCreated(address indexed owner, address indexed legacy)"]),
+        data: legacyEvent.data,
+        topics: legacyEvent.topics,
+      }) as { eventName: string; args: { legacy: string; owner: string } };
+
+      if (args) {
+        // use legacy event to load the legacy page
+        router.push(`/legacy/${args.legacy}`);
+      }
+    },
+  });
+
+  // read legacyAddress from contract
+  const { data: legacyAddress } = useScaffoldContractRead({
+    contractName: "LegacyFactory",
+    functionName: "userWill",
+    args: [address ?? ""],
+    enabled: isAddress(address ?? ""),
+  });
+
+  useEffect(() => {
+    // TODO : Set loading status here as well
+    if (isAddress(legacyAddress as string) && legacyAddress !== zeroAddress) {
+      router.push(`/legacy/${legacyAddress}`);
+    }
+  }, [legacyAddress, router]);
+
   return (
-    <>
-      <MetaHeader />
-      <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
-          </p>
+    <IsMountedWrapper>
+      <div className="min-h-screen flex flex-col justify-between">
+        <div className="container flex items-center justify-between pt-8">
+          <Logo />
+
+          {isWalletConnected && (
+            <Button size={"icon"} variant={"icon"} onClick={openAccountModal}>
+              <Icon title="logout" />
+            </Button>
+          )}
         </div>
 
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
+        <div className="container py-24 flex-1">
+          <div className="bg-backgroundLight rounded-3xl p-4 md:p-6 max-w-full md:max-w-md text-center mx-auto">
+            <div className="mb-1">
+              {isWalletConnected ? (
+                <Image className="mx-auto" src={walletConnectedSvg} alt="wallet-connected" />
+              ) : (
+                <Image className="mx-auto" src={walletNotConnectedSvg} alt="wallet-not-connected" />
+              )}
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Example UI
-                </Link>{" "}
-                to build your own UI.
-              </p>
+
+            <h1 className="font-grotesque font-semibold text-white">Welcome</h1>
+
+            <div className="px-3">
+              {isWalletConnected ? (
+                <h5>To start using TokenLegacy, you need to deploy your will.</h5>
+              ) : (
+                <h5>Connect wallet address to continue</h5>
+              )}
             </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
+
+            <div className="mt-5">
+              {isWalletConnected ? (
+                <Button className="w-full" onClick={() => createLegacy()}>
+                  <span>Deploy Will</span>
+
+                  {/* <Image src={gesFeeSvg} alt="gas-fee" /> */}
+                </Button>
+              ) : (
+                <ConnectButton.Custom>
+                  {({ openConnectModal }) => (
+                    <Button className="w-full" onClick={openConnectModal}>
+                      <span>Connect wallet</span>
+
+                      <Image src={walletSvg} alt="wallet" />
+                    </Button>
+                  )}
+                </ConnectButton.Custom>
+              )}
             </div>
           </div>
         </div>
+
+        <div className="h-[180px] overflow-hidden">
+          <Image src={homeBg} className="object-cover w-full h-full" alt="home-bg" />
+        </div>
       </div>
-    </>
+    </IsMountedWrapper>
   );
 };
 
-export default Home;
+export default HomePage;
