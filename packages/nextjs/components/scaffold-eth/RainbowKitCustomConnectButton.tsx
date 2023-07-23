@@ -32,7 +32,7 @@ export const RainbowKitCustomConnectButton = () => {
 
               if (chain.unsupported || chain.id !== configuredNetwork.id) {
                 return (
-                  <div className="dropdown dropdown-end">
+                  <div className="border bg-gray-800">
                     <label tabIndex={0} className="btn btn-error btn-sm dropdown-toggle">
                       <span>Wrong network</span>
                       <ChevronDownIcon className="h-6 w-4 ml-2 sm:ml-0" />
@@ -63,23 +63,19 @@ export const RainbowKitCustomConnectButton = () => {
               return (
                 <div className="px-2 flex justify-end items-center">
                   <div className="flex justify-center items-center border-1 rounded-lg">
-                    <div className="flex flex-col items-center mr-1">
+                    <div className="flex flex-col items-center mr-3">
                       <Balance address={account.address} className="min-h-0 h-auto" />
                       <span className="text-xs" style={{ color: networkColor }}>
                         {chain.name}
                       </span>
                     </div>
-                    <button
-                      onClick={openAccountModal}
-                      type="button"
-                      className="btn btn-secondary btn-sm pl-0 pr-2 shadow-md"
-                    >
+                    <span onClick={openAccountModal} role="button" className="flex flex-row items-center mr-3">
                       <BlockieAvatar address={account.address} size={24} ensImage={account.ensAvatar} />
                       <span className="ml-2 mr-1">{account.displayName}</span>
                       <span>
                         <ChevronDownIcon className="h-6 w-4" />
                       </span>
-                    </button>
+                    </span>
                   </div>
                 </div>
               );
