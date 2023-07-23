@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import Beneficiary from "../Beneficiary";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 

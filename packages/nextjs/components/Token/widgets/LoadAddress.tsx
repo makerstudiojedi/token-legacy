@@ -4,7 +4,7 @@ import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import avatar from "../../../public/avatar1.svg";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import { EditableField } from "~~/components/EditableField";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 import { Slider } from "~~/components/ui/slider";

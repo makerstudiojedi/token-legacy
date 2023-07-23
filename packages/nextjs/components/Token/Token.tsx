@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import ethereumIcon from "../../public/ethereum.svg";
-import Icon from "../Icon";
+import Icon from "../Icons";
 import styles from "./Token.module.scss";
 import TokenDialog from "./widgets/TokenDialog";
 

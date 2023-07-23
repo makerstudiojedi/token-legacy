@@ -5,7 +5,7 @@ import avatar from "../../../public/avatar1.svg";
 import DeleteBeneficiary from "./DeleteBeneficiary";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import { EditableField } from "~~/components/EditableField";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import AddressEditorDialog from "~~/components/Token/widgets/AddressEditorDialog";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
@@ -148,7 +148,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
                   className="bg-[#273B53] border-white hover:bg-backgroundDark"
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >
-                  <Icon title="delete" />
+                  <Icon title="delete" className="flex-shrink-0" />
                 </Button>
 
                 <Button className="col-span-4" onClick={() => setIsEditing(true)}>

@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import LoadAddress from "./LoadAddress";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import { Loader } from "~~/components/Loader";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 import { cn } from "~~/lib/utils";

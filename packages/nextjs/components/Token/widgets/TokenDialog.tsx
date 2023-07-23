@@ -4,7 +4,7 @@ import ethereumIcon from "../../../public/ethereum.svg";
 import AddressEditorDialog from "./AddressEditorDialog";
 import { BeneficiariesList } from "~~/components/BeneficiariesList";
 import { DonutChart } from "~~/components/DonutChart";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 

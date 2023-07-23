@@ -1,10 +1,11 @@
 import Image from "next/image";
 import tokensBg from "../public/tokens-bg.svg";
+import IsMountedWrapper from "./IsMountedWrapper";
 import { Navbar } from "./Navbar";
 
 export default function WalletLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <IsMountedWrapper>
       <Navbar />
 
       <div className="container pb-20">
@@ -16,6 +17,6 @@ export default function WalletLayout({ children }: { children: React.ReactNode }
 
         {/* <footer>73000 days to release</footer> */}
       </div>
-    </>
+    </IsMountedWrapper>
   );
 }

@@ -2,7 +2,7 @@ import Image from "next/image";
 import avatar from "../../../public/avatar.svg";
 import type { NextPage } from "next";
 import { AddToClipboard } from "~~/components/AddToClipboard";
-import Icon from "~~/components/Icon";
+import Icon from "~~/components/Icons";
 import WalletLayout from "~~/components/Layout";
 import { Token } from "~~/components/Token";
 import { shortenAddress } from "~~/utils/helpers";

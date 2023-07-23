@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import Icon from "../Icon";
+import Icon from "../Icons";
 import Logo from "../Logo/Logo";
 import { Button } from "../ui/button";
 import styles from "./Navbar.module.scss";
