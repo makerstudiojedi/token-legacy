@@ -1,5 +1,5 @@
 import Image from "next/image";
-import avatar from "../../../public/avatar.svg";
+import avatar from "../../public/avatar.svg";
 import type { NextPage } from "next";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
