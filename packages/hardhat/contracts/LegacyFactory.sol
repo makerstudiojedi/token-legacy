@@ -41,6 +41,7 @@ contract LegacyFactory is Ownable {
 			"initialize(address)",
 			msg.sender
 		);
+
 		address clone = Clones.cloneDeterministic(
 			implementationAddress,
 			keccak256(data)

@@ -1,21 +1,23 @@
-import Image from "next/image";
-import avatar from "../../public/avatar.svg";
+import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
 import WalletLayout from "~~/components/Layout";
 import { Token } from "~~/components/Token";
+import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { shortenAddress } from "~~/utils/helpers";
 
 const TokensPage: NextPage = (): JSX.Element => {
-  const address = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+  const router = useRouter();
+
+  const address = (router.query.legacyAddress ?? "") as string;
 
   return (
     <WalletLayout>
       <div className="-mt-14 z-20 relative">
         <div className="max-w-[353px] mx-auto">
           <div className="w-28 h-28 rounded-full mx-auto border-[4px] border-[#1B4A76]">
-            <Image src={avatar} className="object-cover w-full h-full" alt="tokens-bg" />
+            <BlockieAvatar address={address} size={200} className="object-cover w-full h-full blockie-avatar" />
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-2">

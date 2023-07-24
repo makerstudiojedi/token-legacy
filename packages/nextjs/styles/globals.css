@@ -31,3 +31,8 @@ h6 {
   font-size: 12px;
   line-height: 20px;
 }
+
+.blockie-avatar {
+  width: 100% !important;
+  height: 100% !important;
+}
