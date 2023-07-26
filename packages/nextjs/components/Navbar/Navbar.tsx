@@ -1,4 +1,4 @@
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AddressBadge } from "../AddressBadge";
 import Icon from "../Icons";
 import Logo from "../Logo/Logo";
@@ -13,6 +13,10 @@ const Navbar: React.FC = (): JSX.Element => {
   const { address } = useAccount();
   const { openAccountModal } = useAccountModal();
 
+  const pathname = usePathname() ?? "";
+
+  const isBeneficiaryPage = pathname.startsWith("/beneficiary");
+
   return (
     <header className={styles.Navbar}>
       <nav>
@@ -20,11 +24,19 @@ const Navbar: React.FC = (): JSX.Element => {
 
         <ul>
           <li>
-            <Button>
-              <Icon title="import" />
+            {!isBeneficiaryPage ? (
+              <Button>
+                <Icon title="import" />
 
-              <span>Import tokens</span>
-            </Button>
+                <span>Import tokens</span>
+              </Button>
+            ) : (
+              <Button>
+                <Icon title="import" />
+
+                <span>Withdraw to wallet</span>
+              </Button>
+            )}
           </li>
 
           <li>

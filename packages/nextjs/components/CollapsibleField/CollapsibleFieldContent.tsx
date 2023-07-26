@@ -13,7 +13,7 @@ const CollapsibleFieldContent = ({ children }: CollapsibleFieldContentProps) => 
     <div>
       <div className="h-px bg-[#265083] my-5"></div>
 
-      {children}
+      <div className="px-2 pb-2">{children}</div>
     </div>
   );
 };

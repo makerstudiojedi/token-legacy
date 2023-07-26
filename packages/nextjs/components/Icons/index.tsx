@@ -15,6 +15,7 @@ import ImportantIcon from "./ImportantIcon";
 import LineIcon from "./LineIcon";
 import LogoutIcon from "./LogoutIcon";
 import MagicWandIcon from "./MagicWandIcon";
+import PencilEditIcon from "./PencilEditIcon";
 import StarIcon from "./StarIcon";
 import StopWatchIcon from "./StopWatchIcon";
 import StopWatchWarningIcon from "./StopWatchWarningIcon";
@@ -46,6 +47,7 @@ const IconsMap = {
   diamond: DiamondIcon,
   calendar: CalendarIcon,
   "stop-watch-warning": StopWatchWarningIcon,
+  "pencil-edit": PencilEditIcon,
 };
 
 interface IconProps extends MainIconProps {

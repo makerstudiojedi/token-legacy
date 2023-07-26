@@ -2,7 +2,11 @@ import { useState } from "react";
 import Image from "next/image";
 import NFTDetails from "./widgets/NFTDetails";
 
-const NFTCard = () => {
+interface NFTCardProps {
+  readOnly?: boolean;
+}
+
+const NFTCard = ({ readOnly = false }: NFTCardProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const address = "0x9c68C50bb36c453Ef873A5F437e5Cb16e8f48a62";
@@ -27,7 +31,7 @@ const NFTCard = () => {
         </div>
       </div>
 
-      <NFTDetails isOpen={isOpen} setIsOpen={setIsOpen} address={address} />
+      <NFTDetails isOpen={isOpen} setIsOpen={setIsOpen} address={address} readOnly={readOnly} />
     </>
   );
 };

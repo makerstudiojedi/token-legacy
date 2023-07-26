@@ -8,7 +8,7 @@ const CollapsibleField = ({ children }: CollapsibleFieldProps) => {
   return (
     <>
       <CollapsibleFieldContextProvider>
-        <div className="p-4 rounded-2xl overflow-hidden bg-[#17304F]">{children}</div>
+        <div className="p-3 rounded-2xl overflow-hidden bg-[#17304F]">{children}</div>
       </CollapsibleFieldContextProvider>
     </>
   );

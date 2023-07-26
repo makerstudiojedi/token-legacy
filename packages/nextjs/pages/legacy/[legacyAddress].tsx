@@ -8,7 +8,7 @@ import { Token } from "~~/components/Token";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { shortenAddress } from "~~/utils/helpers";
 
-const TokensPage: NextPage = (): JSX.Element => {
+const LegacyPage: NextPage = (): JSX.Element => {
   const router = useRouter();
 
   const address = (router.query.legacyAddress ?? "") as string;
@@ -47,4 +47,4 @@ const TokensPage: NextPage = (): JSX.Element => {
   );
 };
 
-export default TokensPage;
+export default LegacyPage;

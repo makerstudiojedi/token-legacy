@@ -10,11 +10,9 @@ import { cn } from "~~/lib/utils";
 interface NFTEditorProps {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
-  onSave?: () => void;
-  allotShare?: boolean;
 }
 
-const NFTEditor: React.FC<NFTEditorProps> = ({ open, onOpenChange }): JSX.Element => {
+const NFTEditor = ({ open, onOpenChange }: NFTEditorProps) => {
   const [address, setAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -76,7 +74,7 @@ const NFTEditor: React.FC<NFTEditorProps> = ({ open, onOpenChange }): JSX.Elemen
               <Icon title="wallet-blue" />
 
               <div className="flex-1 overflow-hidden whitespace-nowrap overflow-ellipsis font-bold text-[#3F5876]">
-                {address}I
+                {address}
               </div>
 
               <span
