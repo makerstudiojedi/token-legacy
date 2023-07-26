@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
 import WalletLayout from "~~/components/Layout";
+import { NFTCard } from "~~/components/NFTCard";
 import { Token } from "~~/components/Token";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { shortenAddress } from "~~/utils/helpers";
@@ -32,6 +33,13 @@ const TokensPage: NextPage = (): JSX.Element => {
             <Token permissionGranted={false} />
             <Token permissionGranted={true} />
             <Token permissionGranted={false} />
+          </div>
+
+          <div className="h-px w-full bg-[#273B53] my-8"></div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <NFTCard />
+            <NFTCard />
           </div>
         </div>
       </div>

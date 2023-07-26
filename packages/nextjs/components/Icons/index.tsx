@@ -2,11 +2,13 @@ import React from "react";
 import ApproximateIcon from "./ApproximateIcon";
 import BeneficiariesBlueIcon from "./BeneficiariesBlueIcon";
 import BeneficiariesIcon from "./BeneficiariesIcon";
+import CalendarIcon from "./CalendarIcon";
 import ChevronLeftIcon from "./ChevronLeftIcon";
 import CopyIcon from "./CopyIcon";
 import CopyPurpleIcon from "./CopyPurpleIcon";
 import DeleteIcon from "./DeleteIcon";
 import DeleteOrangeIcon from "./DeleteOrangeIcon";
+import DiamondIcon from "./DiamondIcon";
 import EditIcon from "./EditIcon";
 import ImportIcon from "./ImportIcon";
 import ImportantIcon from "./ImportantIcon";
@@ -15,6 +17,7 @@ import LogoutIcon from "./LogoutIcon";
 import MagicWandIcon from "./MagicWandIcon";
 import StarIcon from "./StarIcon";
 import StopWatchIcon from "./StopWatchIcon";
+import StopWatchWarningIcon from "./StopWatchWarningIcon";
 import UserIcon from "./UserIcon";
 import UsersIcon from "./UsersIcon";
 import WalletBlueIcon from "./WalletBlueIcon";
@@ -40,6 +43,9 @@ const IconsMap = {
   edit: EditIcon,
   "delete-orange": DeleteOrangeIcon,
   line: LineIcon,
+  diamond: DiamondIcon,
+  calendar: CalendarIcon,
+  "stop-watch-warning": StopWatchWarningIcon,
 };
 
 interface IconProps extends MainIconProps {

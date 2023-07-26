@@ -1,11 +1,17 @@
 import { useRouter } from "next/navigation";
+import { AddressBadge } from "../AddressBadge";
 import Icon from "../Icons";
 import Logo from "../Logo/Logo";
 import { Button } from "../ui/button";
 import styles from "./Navbar.module.scss";
+import { useAccountModal } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 const Navbar: React.FC = (): JSX.Element => {
   const router = useRouter();
+
+  const { address } = useAccount();
+  const { openAccountModal } = useAccountModal();
 
   return (
     <header className={styles.Navbar}>
@@ -28,9 +34,7 @@ const Navbar: React.FC = (): JSX.Element => {
           </li>
 
           <li>
-            <Button size={"icon"} variant={"icon"}>
-              <Icon title="logout" />
-            </Button>
+            <AddressBadge address={address ?? ""} onClick={openAccountModal} />
           </li>
         </ul>
       </nav>
