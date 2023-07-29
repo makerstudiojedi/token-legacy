@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import homeBg from "../public/home-bg.svg";
@@ -14,6 +13,7 @@ import { AddressBadge } from "~~/components/AddressBadge";
 import Icon from "~~/components/Icons";
 import IsMountedWrapper from "~~/components/IsMountedWrapper";
 import Logo from "~~/components/Logo/Logo";
+import { ToolTip } from "~~/components/ToolTip";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
@@ -26,8 +26,6 @@ const HomePage: NextPage = (): JSX.Element => {
   const isWalletConnected = isAddress(address as string);
 
   const { openAccountModal } = useAccountModal();
-
-  const router = useRouter();
 
   // create a new legacy contract using Factory contract
   const { writeAsync: createLegacy } = useScaffoldContractWrite({
@@ -99,9 +97,6 @@ const HomePage: NextPage = (): JSX.Element => {
                           <BenefactorCard legacyAddress={legacyAddress} />
                         </div>
                       )}
-                      {/* <Button className="w-full" onClick={() => router.push(`/legacy/${legacyAddress}`)}>
-                        <span>Go to will</span>
-                      </Button> */}
                     </>
                   ) : (
                     <Button className="w-full" onClick={() => createLegacy()}>
@@ -160,15 +155,17 @@ export const BeneficiaryCard = ({ address }: { address: string }) => {
         <p className="text-sm font-bold">30 days</p>
       </div>
 
-      <span
-        role="link"
-        className={cn(
-          "w-5 h-5 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
-        )}
-        onClick={() => router.push(`/legacy/${address}`)}
-      >
-        <Icon className="flex-shrink-0" title="arrow-up-right" width={12} height={12} />
-      </span>
+      <ToolTip text="View will">
+        <span
+          role="link"
+          className={cn(
+            "w-5 h-5 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition [&>svg]:fill-foreground mt-1",
+          )}
+          onClick={() => router.push(`/legacy/${address}`)}
+        >
+          <Icon className="flex-shrink-0" title="arrow-up-right" width={14} height={14} />
+        </span>
+      </ToolTip>
     </div>
   );
 };
@@ -213,29 +210,33 @@ export const BenefactorCard = ({ legacyAddress }: { legacyAddress: string }) => 
         <p className="text-sm font-bold">{isWithdrawalDateClose ? "12 days" : "30 days"}</p>
       </div>
 
-      <div className="flex items-end justify-center">
-        <span
-          className={cn(
-            "w-5 h-5 mr-1 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
-            isWithdrawalDateClose ? "bg-[#45350D]" : "bg-backgroundDark",
-          )}
-          onClick={() => router.push("/legacy/release-date")}
-        >
-          {isWithdrawalDateClose ? (
-            <Icon className="flex-shrink-0" title="stop-watch-warning" width={12} height={12} />
-          ) : (
-            <Icon className="flex-shrink-0" title="stop-watch" width={12} height={12} />
-          )}
-        </span>
+      <div className="flex items-center gap-5">
+        <ToolTip text="Extend unlock date">
+          <span
+            className={cn(
+              "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
+              isWithdrawalDateClose ? "bg-[#45350D]" : "bg-backgroundDark",
+            )}
+            onClick={() => router.push("/legacy/release-date")}
+          >
+            {isWithdrawalDateClose ? (
+              <Icon className="flex-shrink-0" title="stop-watch-warning" width={16} height={16} />
+            ) : (
+              <Icon className="flex-shrink-0" title="stop-watch" width={16} height={16} />
+            )}
+          </span>
+        </ToolTip>
 
-        <span
-          className={cn(
-            "w-5 h-5 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
-          )}
-          onClick={() => router.push(`/legacy/${legacyAddress}`)}
-        >
-          <Icon className="flex-shrink-0" title="arrow-up-right" width={12} height={12} />
-        </span>
+        <ToolTip text="View will">
+          <span
+            className={cn(
+              "w-5 h-5 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition [&>svg]:fill-foreground mt-1",
+            )}
+            onClick={() => router.push(`/legacy/${legacyAddress}`)}
+          >
+            <Icon className="flex-shrink-0" title="arrow-up-right" width={14} height={14} />
+          </span>
+        </ToolTip>
       </div>
     </div>
   );
