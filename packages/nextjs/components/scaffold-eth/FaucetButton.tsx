@@ -55,7 +55,6 @@ export const FaucetButton = () => {
           ? ""
           : "tooltip tooltip-bottom tooltip-secondary tooltip-open font-bold before:left-auto before:transform-none before:content-[attr(data-tip)] before:right-0"
       }
-      data-tip="Grab funds from faucet"
     >
       <button
         className={`btn btn-secondary btn-sm px-2 rounded-full ${

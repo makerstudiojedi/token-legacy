@@ -3402,6 +3402,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@phosphor-icons/react@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "@phosphor-icons/react@npm:2.0.10"
+  peerDependencies:
+    react: ">= 16.8"
+    react-dom: ">= 16.8"
+  checksum: 534b167fe366f400b703cf937dc76f00ee089c32c847dbdb6d51ea2505f3262e636c1bb98f0b12eede21f785d96c716bd1ce08a6cdce328e940aa6d5b1d846b5
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -4121,6 +4131,7 @@ __metadata:
   dependencies:
     "@ethersproject/providers": ^5.7.2
     "@heroicons/react": ^2.0.11
+    "@phosphor-icons/react": ^2.0.10
     "@radix-ui/react-dialog": ^1.0.4
     "@radix-ui/react-slider": ^1.1.2
     "@radix-ui/react-slot": ^1.0.2
@@ -4137,6 +4148,7 @@ __metadata:
     "@uniswap/v2-sdk": ^3.0.1
     autoprefixer: ^10.4.12
     class-variance-authority: ^0.6.1
+    classnames: ^2.3.2
     d3: ^7.8.5
     date-fns: ^2.30.0
     eslint: ^8.15.0
@@ -7998,6 +8010,13 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: 773da48aef52a041115d413fee8340b357a4da2eb505764f327183b155edd7cc9d24819eb4f707c83dbdae8588024f5dddeb322125567c59d5d1f6f16334cdb9
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "classnames@npm:2.3.2"
+  checksum: 2c62199789618d95545c872787137262e741f9db13328e216b093eea91c85ef2bfb152c1f9e63027204e2559a006a92eb74147d46c800a9f96297ae1d9f96f4e
   languageName: node
   linkType: hard
 

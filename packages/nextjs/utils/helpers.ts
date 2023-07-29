@@ -49,7 +49,7 @@ export const hexToHSL = (hex: string): string => {
 };
 
 export const shortenAddress = (address: string): string => {
-  const shortenedStr = address.slice(0, 6) + "..." + address.slice(-7);
+  const shortenedStr = address.slice(0, 4) + "..." + address.slice(-4);
 
   return shortenedStr;
 };

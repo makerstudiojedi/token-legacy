@@ -3,7 +3,7 @@ import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaff
 const DevAccount = () => {
   return (
     <div className="fixed w-full bottom-4">
-      <div className="flex flex-1 justify-end">
+      <div className="flex flex-1 justify-center">
         <div className="flex max-w-md p-2 bg-blue-950 items-center justify-center rounded">
           <RainbowKitCustomConnectButton />
           <FaucetButton />

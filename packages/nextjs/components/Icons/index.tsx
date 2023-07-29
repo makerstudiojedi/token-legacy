@@ -1,5 +1,6 @@
 import React from "react";
 import ApproximateIcon from "./ApproximateIcon";
+import ArrowUpRight from "./ArrowUpRight";
 import BeneficiariesBlueIcon from "./BeneficiariesBlueIcon";
 import BeneficiariesIcon from "./BeneficiariesIcon";
 import CalendarIcon from "./CalendarIcon";
@@ -48,6 +49,7 @@ const IconsMap = {
   calendar: CalendarIcon,
   "stop-watch-warning": StopWatchWarningIcon,
   "pencil-edit": PencilEditIcon,
+  "arrow-up-right": ArrowUpRight,
 };
 
 interface IconProps extends MainIconProps {
