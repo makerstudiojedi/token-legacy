@@ -11,10 +11,16 @@
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "check-types": "tsc --noEmit --incremental",
     "vercel": "vercel",
-    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
+    "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
+    "codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.8",
     "@ethersproject/providers": "^5.7.2",
+    "@graphql-codegen/cli": "^4.0.1",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@heroicons/react": "^2.0.11",
     "@phosphor-icons/react": "^2.0.10",
     "@radix-ui/react-dialog": "^1.0.4",
@@ -30,6 +36,7 @@
     "d3": "^7.8.5",
     "date-fns": "^2.30.0",
     "ethers": "^6.6.4",
+    "graphql": "^16.5.0",
     "lucide-react": "^0.259.0",
     "next": "^13.1.6",
     "nextjs-progressbar": "^0.0.16",

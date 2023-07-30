@@ -13,6 +13,7 @@ contract LegacyFactory is Ownable {
 
 	event ImplementationUpdated(address oldImp, address newImp);
 	event LegacyCreated(address indexed owner, address indexed legacy);
+	event FeeSet(uint256 amount);
 
 	// constructor() {
 	// 	LegacyImplementation implementation = new LegacyImplementation();
@@ -25,6 +26,12 @@ contract LegacyFactory is Ownable {
 		implementationAddress = imp;
 
 		emit ImplementationUpdated(oldImp, imp);
+	}
+
+	function setFee(uint256 amount) public onlyOwner {
+		fee = amount;
+
+		emit FeeSet(amount);
 	}
 
 	function createLegacy() public payable returns (address) {

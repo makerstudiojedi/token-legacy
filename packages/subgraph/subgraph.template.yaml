@@ -1,0 +1,57 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  # LegacyFactory
+  - kind: ethereum/contract
+    name: Legacy
+    network: {{ network }}
+    source:
+      address: '{{ LegacyFactory }}'
+      abi: LegacyFactory
+      startBlock: 0
+      # startBlock: {{ startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Legacy
+        - User
+      abis:
+        - name: LegacyFactory
+          file: ./abis/{{ network }}_LegacyFactory.json
+        - name: LegacyImplementation
+          file: ./abis/{{ network }}_LegacyImplementation.json
+      eventHandlers:
+        - event: LegacyCreated(indexed address,indexed address)
+          handler: handleLegacyCreated
+      file: ./src/factory.ts
+
+templates:
+  # LegacyImplementation
+  - kind: ethereum/contract
+    name: LegacyImplementation
+    network: {{ network }}
+    source:
+      abi: LegacyImplementation
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - User
+        - Legacy
+        - LegacyToken
+        - Allocation
+      abis:
+        - name: LegacyImplementation
+          file: ./abis/{{ network }}_LegacyImplementation.json
+      eventHandlers:
+        - event: WillAdded(indexed address,address,uint256)
+          handler: handleWillAdded
+        - event: WillWithdrawn(indexed address,address,uint256)
+          handler: handleWillWithdrawn
+        - event: ProofUpdated(uint256)
+          handler: handleProofUpdated
+      file: ./src/implementation.ts

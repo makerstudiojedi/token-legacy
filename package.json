@@ -5,7 +5,8 @@
   "workspaces": {
     "packages": [
       "packages/hardhat",
-      "packages/nextjs"
+      "packages/nextjs",
+      "packages/subgraph"
     ]
   },
   "scripts": {
@@ -13,6 +14,7 @@
     "chain": "yarn workspace @se-2/hardhat chain",
     "fork": "yarn workspace @se-2/hardhat fork",
     "deploy": "yarn workspace @se-2/hardhat deploy",
+    "graph": "yarn workspace @se-2/hardhat graph",
     "verify": "yarn workspace @se-2/hardhat verify",
     "compile": "yarn workspace @se-2/hardhat compile",
     "generate": "yarn workspace @se-2/hardhat generate",

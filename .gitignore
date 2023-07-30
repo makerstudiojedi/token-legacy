@@ -12,3 +12,5 @@ node_modules
 .vscode/**
 .DS_Store
 .history
+packages/subgraph/data/**/*
+packages/subgraph/build/**/*

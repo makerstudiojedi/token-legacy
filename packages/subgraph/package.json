@@ -1,0 +1,28 @@
+{
+  "name": "@se-2/subgraph",
+  "version": "0.0.1",
+  "license": "MIT",
+  "keywords": [
+    "graph",
+    "subgraph"
+  ],
+  "scripts": {
+    "prepare:mainnet": "mustache config/mainnet.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:optimism": "mustache config/optimism.json subgraph.template.yaml > subgraph.yaml",
+    "prepare:local": "mustache config/localhost.json subgraph.template.yaml > subgraph.yaml",
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ ghostffcode/token-legacy",
+    "create-local": "graph create --node http://localhost:8020/ ghostffcode/token-legacy",
+    "remove-local": "graph remove --node http://localhost:8020/ ghostffcode/token-legacy",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 ghostffcode/token-legacy"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-ts": "0.27.0",
+    "@openzeppelin/subgraphs": "^0.1.8"
+  },
+  "devDependencies": {
+    "matchstick-as": "^0.5.0",
+    "mustache": "^4.2.0"
+  }
+}

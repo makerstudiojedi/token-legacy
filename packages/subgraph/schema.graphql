@@ -1,0 +1,38 @@
+type User @entity {
+  id: ID!
+  address: Bytes!
+  createdAt: BigInt!
+  legacy: Legacy
+  allocationsFrom: [Allocation!] @derivedFrom(field: "from")
+  allocationsTo: [Allocation!] @derivedFrom(field: "to")
+}
+
+type Legacy @entity {
+  id: ID!
+  owner: User!
+  unlocksAt: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  transactionHash: String!
+  tokens: [LegacyToken!] @derivedFrom(field: "legacy")
+  allocations: [Allocation!] @derivedFrom(field: "legacy")
+}
+
+type LegacyToken @entity {
+  id: ID!
+  token: Bytes!
+  legacy: Legacy!
+  allocations: [Allocation!] @derivedFrom(field: "token")
+}
+
+type Allocation @entity {
+  id: ID!
+  legacy: Legacy!
+  from: User!
+  to: User!
+  withdrawn: Boolean!
+  token: LegacyToken!
+  percentage: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}

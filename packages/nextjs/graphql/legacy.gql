@@ -1,0 +1,14 @@
+query fetchLegacy($address: ID!) {
+  legacies(where: { id: $address }) {
+    id
+    createdAt
+    updatedAt
+    owner {
+      id
+    }
+    tokens {
+      id
+      token
+    }
+  }
+}

@@ -13,9 +13,9 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 	mapping(bytes32 => uint256) public wills;
 	mapping(address => uint256) public totalAllocations;
 
-	event ProofUpdated(uint256 proofDeadline);
 	event WillAdded(address indexed to, address token, uint256 percentage);
 	event WillWithdrawn(address indexed to, address token, uint256 percentage);
+	event ProofUpdated(uint256 proofDeadline);
 
 	modifier onlyOwner() {
 		require(msg.sender == owner, "You are not the owner of this legacy");
