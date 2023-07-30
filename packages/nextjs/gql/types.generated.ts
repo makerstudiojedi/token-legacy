@@ -724,9 +724,9 @@ export type FetchLegacyQueryVariables = Exact<{
 
 export type FetchLegacyQueryResult = (
   { __typename?: 'Query' }
-  & { legacies: Array<(
+  & { legacy?: Maybe<(
     { __typename?: 'Legacy' }
-    & Pick<Legacy, 'id' | 'createdAt' | 'updatedAt'>
+    & Pick<Legacy, 'id' | 'unlocksAt' | 'createdAt' | 'updatedAt'>
     & { owner: (
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -740,8 +740,9 @@ export type FetchLegacyQueryResult = (
 
 export const FetchLegacyDocument = /*#__PURE__*/ gql`
     query fetchLegacy($address: ID!) {
-  legacies(where: {id: $address}) {
+  legacy(id: $address) {
     id
+    unlocksAt
     createdAt
     updatedAt
     owner {

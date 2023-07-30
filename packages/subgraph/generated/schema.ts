@@ -29,13 +29,21 @@ export class User extends Entity {
     }
   }
 
+  static loadInBlock(id: string): User | null {
+    return changetype<User | null>(store.get_in_block("User", id));
+  }
+
   static load(id: string): User | null {
     return changetype<User | null>(store.get("User", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set id(value: string) {
@@ -44,7 +52,11 @@ export class User extends Entity {
 
   get address(): Bytes {
     let value = this.get("address");
-    return value!.toBytes();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
   }
 
   set address(value: Bytes) {
@@ -53,7 +65,11 @@ export class User extends Entity {
 
   get createdAt(): BigInt {
     let value = this.get("createdAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set createdAt(value: BigInt) {
@@ -77,38 +93,20 @@ export class User extends Entity {
     }
   }
 
-  get allocationsFrom(): Array<string> | null {
-    let value = this.get("allocationsFrom");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+  get allocationsFrom(): AllocationLoader {
+    return new AllocationLoader(
+      "User",
+      this.get("id")!.toString(),
+      "allocationsFrom"
+    );
   }
 
-  set allocationsFrom(value: Array<string> | null) {
-    if (!value) {
-      this.unset("allocationsFrom");
-    } else {
-      this.set("allocationsFrom", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
-  get allocationsTo(): Array<string> | null {
-    let value = this.get("allocationsTo");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set allocationsTo(value: Array<string> | null) {
-    if (!value) {
-      this.unset("allocationsTo");
-    } else {
-      this.set("allocationsTo", Value.fromStringArray(<Array<string>>value));
-    }
+  get allocationsTo(): AllocationLoader {
+    return new AllocationLoader(
+      "User",
+      this.get("id")!.toString(),
+      "allocationsTo"
+    );
   }
 }
 
@@ -130,13 +128,21 @@ export class Legacy extends Entity {
     }
   }
 
+  static loadInBlock(id: string): Legacy | null {
+    return changetype<Legacy | null>(store.get_in_block("Legacy", id));
+  }
+
   static load(id: string): Legacy | null {
     return changetype<Legacy | null>(store.get("Legacy", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set id(value: string) {
@@ -145,7 +151,11 @@ export class Legacy extends Entity {
 
   get owner(): string {
     let value = this.get("owner");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set owner(value: string) {
@@ -154,7 +164,11 @@ export class Legacy extends Entity {
 
   get unlocksAt(): BigInt {
     let value = this.get("unlocksAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set unlocksAt(value: BigInt) {
@@ -163,7 +177,11 @@ export class Legacy extends Entity {
 
   get createdAt(): BigInt {
     let value = this.get("createdAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set createdAt(value: BigInt) {
@@ -172,7 +190,11 @@ export class Legacy extends Entity {
 
   get updatedAt(): BigInt {
     let value = this.get("updatedAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set updatedAt(value: BigInt) {
@@ -181,45 +203,31 @@ export class Legacy extends Entity {
 
   get transactionHash(): string {
     let value = this.get("transactionHash");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set transactionHash(value: string) {
     this.set("transactionHash", Value.fromString(value));
   }
 
-  get tokens(): Array<string> | null {
-    let value = this.get("tokens");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
+  get tokens(): LegacyTokenLoader {
+    return new LegacyTokenLoader(
+      "Legacy",
+      this.get("id")!.toString(),
+      "tokens"
+    );
   }
 
-  set tokens(value: Array<string> | null) {
-    if (!value) {
-      this.unset("tokens");
-    } else {
-      this.set("tokens", Value.fromStringArray(<Array<string>>value));
-    }
-  }
-
-  get allocations(): Array<string> | null {
-    let value = this.get("allocations");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set allocations(value: Array<string> | null) {
-    if (!value) {
-      this.unset("allocations");
-    } else {
-      this.set("allocations", Value.fromStringArray(<Array<string>>value));
-    }
+  get allocations(): AllocationLoader {
+    return new AllocationLoader(
+      "Legacy",
+      this.get("id")!.toString(),
+      "allocations"
+    );
   }
 }
 
@@ -241,13 +249,23 @@ export class LegacyToken extends Entity {
     }
   }
 
+  static loadInBlock(id: string): LegacyToken | null {
+    return changetype<LegacyToken | null>(
+      store.get_in_block("LegacyToken", id)
+    );
+  }
+
   static load(id: string): LegacyToken | null {
     return changetype<LegacyToken | null>(store.get("LegacyToken", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set id(value: string) {
@@ -256,7 +274,11 @@ export class LegacyToken extends Entity {
 
   get token(): Bytes {
     let value = this.get("token");
-    return value!.toBytes();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBytes();
+    }
   }
 
   set token(value: Bytes) {
@@ -265,28 +287,23 @@ export class LegacyToken extends Entity {
 
   get legacy(): string {
     let value = this.get("legacy");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set legacy(value: string) {
     this.set("legacy", Value.fromString(value));
   }
 
-  get allocations(): Array<string> | null {
-    let value = this.get("allocations");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set allocations(value: Array<string> | null) {
-    if (!value) {
-      this.unset("allocations");
-    } else {
-      this.set("allocations", Value.fromStringArray(<Array<string>>value));
-    }
+  get allocations(): AllocationLoader {
+    return new AllocationLoader(
+      "LegacyToken",
+      this.get("id")!.toString(),
+      "allocations"
+    );
   }
 }
 
@@ -308,13 +325,21 @@ export class Allocation extends Entity {
     }
   }
 
+  static loadInBlock(id: string): Allocation | null {
+    return changetype<Allocation | null>(store.get_in_block("Allocation", id));
+  }
+
   static load(id: string): Allocation | null {
     return changetype<Allocation | null>(store.get("Allocation", id));
   }
 
   get id(): string {
     let value = this.get("id");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set id(value: string) {
@@ -323,7 +348,11 @@ export class Allocation extends Entity {
 
   get legacy(): string {
     let value = this.get("legacy");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set legacy(value: string) {
@@ -332,7 +361,11 @@ export class Allocation extends Entity {
 
   get from(): string {
     let value = this.get("from");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set from(value: string) {
@@ -341,7 +374,11 @@ export class Allocation extends Entity {
 
   get to(): string {
     let value = this.get("to");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set to(value: string) {
@@ -350,7 +387,11 @@ export class Allocation extends Entity {
 
   get withdrawn(): boolean {
     let value = this.get("withdrawn");
-    return value!.toBoolean();
+    if (!value || value.kind == ValueKind.NULL) {
+      return false;
+    } else {
+      return value.toBoolean();
+    }
   }
 
   set withdrawn(value: boolean) {
@@ -359,7 +400,11 @@ export class Allocation extends Entity {
 
   get token(): string {
     let value = this.get("token");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toString();
+    }
   }
 
   set token(value: string) {
@@ -368,7 +413,11 @@ export class Allocation extends Entity {
 
   get percentage(): BigInt {
     let value = this.get("percentage");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set percentage(value: BigInt) {
@@ -377,7 +426,11 @@ export class Allocation extends Entity {
 
   get createdAt(): BigInt {
     let value = this.get("createdAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set createdAt(value: BigInt) {
@@ -386,10 +439,50 @@ export class Allocation extends Entity {
 
   get updatedAt(): BigInt {
     let value = this.get("updatedAt");
-    return value!.toBigInt();
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error("Cannot return null for a required field.");
+    } else {
+      return value.toBigInt();
+    }
   }
 
   set updatedAt(value: BigInt) {
     this.set("updatedAt", Value.fromBigInt(value));
+  }
+}
+
+export class AllocationLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): Allocation[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<Allocation[]>(value);
+  }
+}
+
+export class LegacyTokenLoader extends Entity {
+  _entity: string;
+  _field: string;
+  _id: string;
+
+  constructor(entity: string, id: string, field: string) {
+    super();
+    this._entity = entity;
+    this._id = id;
+    this._field = field;
+  }
+
+  load(): LegacyToken[] {
+    let value = store.loadRelated(this._entity, this._id, this._field);
+    return changetype<LegacyToken[]>(value);
   }
 }

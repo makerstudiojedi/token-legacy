@@ -1,6 +1,7 @@
 query fetchLegacy($address: ID!) {
-  legacies(where: { id: $address }) {
+  legacy(id: $address) {
     id
+    unlocksAt
     createdAt
     updatedAt
     owner {

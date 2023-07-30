@@ -1,3 +1,5 @@
+import { addDays, getUnixTime, isPast } from "date-fns";
+
 export const hexToHSL = (hex: string): string => {
   // Remove '#' symbol if present
   hex = hex.replace("#", "");
@@ -52,4 +54,38 @@ export const shortenAddress = (address: string): string => {
   const shortenedStr = address.slice(0, 4) + "..." + address.slice(-4);
 
   return shortenedStr;
+};
+
+export enum legacyUnlockDateCheckStatus {
+  NotSet = "not-set",
+  DatePassed = "date-passed",
+  DateClose = "date-close",
+  DateNotClose = "date-not-close",
+}
+
+export const legacyUnlockDateCheck = (unlocksAt: number): legacyUnlockDateCheckStatus | undefined => {
+  const currentDate = new Date();
+
+  // unlocks equals 0
+  if (unlocksAt === 0) {
+    return legacyUnlockDateCheckStatus.NotSet;
+  }
+
+  // unlocks less than now
+  if (isPast(unlocksAt)) {
+    return legacyUnlockDateCheckStatus.DatePassed;
+  }
+
+  // unlocks less than (now + 7days)
+  const dateAfterSevenDays = addDays(currentDate, 7);
+  const dateAfterSevenDaysMs = getUnixTime(dateAfterSevenDays) * 1000;
+
+  if (unlocksAt < dateAfterSevenDaysMs) {
+    return legacyUnlockDateCheckStatus.DateClose;
+  }
+
+  // unlocks greater than 7 days
+  if (unlocksAt > dateAfterSevenDaysMs) {
+    return legacyUnlockDateCheckStatus.DateNotClose;
+  }
 };

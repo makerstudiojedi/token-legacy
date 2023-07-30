@@ -5,7 +5,7 @@ const contracts = {
       name: "localhost",
       contracts: {
         LegacyFactory: {
-          address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+          address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
           abi: [
             {
               anonymous: false,
@@ -197,7 +197,7 @@ const contracts = {
           ],
         },
         LegacyImplementation: {
-          address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+          address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
           abi: [
             {
               inputs: [],

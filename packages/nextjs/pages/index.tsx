@@ -5,7 +5,7 @@ import walletSvg from "../public/wallet.svg";
 import walletConnectedSvg from "../public/walletConnected.svg";
 import walletNotConnectedSvg from "../public/walletNotConnected.svg";
 import { ConnectButton, useAccountModal } from "@rainbow-me/rainbowkit";
-import classNames from "classnames";
+import { formatDistanceToNow } from "date-fns";
 import type { NextPage } from "next";
 import { isAddress, zeroAddress } from "viem";
 import { useAccount } from "wagmi";
@@ -16,9 +16,10 @@ import Logo from "~~/components/Logo/Logo";
 import { ToolTip } from "~~/components/ToolTip";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Button } from "~~/components/ui/button";
+import { useFetchLegacyQuery } from "~~/gql/types.generated";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { cn } from "~~/lib/utils";
-import { shortenAddress } from "~~/utils/helpers";
+import { legacyUnlockDateCheck, legacyUnlockDateCheckStatus, shortenAddress } from "~~/utils/helpers";
 
 const HomePage: NextPage = (): JSX.Element => {
   const { address } = useAccount();
@@ -174,58 +175,81 @@ export const BenefactorCard = ({ legacyAddress }: { legacyAddress: string }) => 
   const router = useRouter();
 
   // handle loading data for this legacy here
-  console.log(`Loading legacy from subgraph with ${legacyAddress}`);
+  const { data } = useFetchLegacyQuery({
+    variables: {
+      address: legacyAddress.toLowerCase(),
+    },
+  });
 
-  const beneficiaries = [
-    "0xc0ffee254729296a45a3885639AC7E10F9d54979",
-    "0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E",
-    "0xb481Fe10e77b72Efe658a68D26d9fb173a5c6CAC",
-  ];
-  const isWithdrawalDateClose = true;
+  const legacy = data?.legacy;
+
+  const totalTokens = legacy?.tokens?.length;
+
+  const unlocksAt = Number(legacy?.unlocksAt ?? 0) * 1000;
+
+  const legacyDateCheck = legacyUnlockDateCheck(unlocksAt) as legacyUnlockDateCheckStatus;
+
+  let isWithdrawalDateClose;
+
+  if (legacyDateCheck === legacyUnlockDateCheckStatus.DateClose) {
+    isWithdrawalDateClose = true;
+  }
+
+  if (legacyDateCheck === legacyUnlockDateCheckStatus.DateNotClose) {
+    isWithdrawalDateClose = false;
+  }
 
   return (
     <div className="bg-[#1E4069] rounded-[10px] p-3 flex items-center justify-between gap-3">
-      <div className="flex items-center">
-        {beneficiaries.map((address, index) => (
-          <span
-            key={address}
-            className={classNames("w-6 h-6 rounded-full block relative border-2 border-[#1E4069]", {
-              "-ml-2 z-20": index !== 0,
-            })}
-          >
-            <BlockieAvatar address={address} size={200} className="object-cover w-full h-full blockie-avatar" />
-          </span>
-        ))}
-      </div>
-
       <div className="flex items-center gap-1">
         <Icon className="flex-shrink-0" title="diamond" />
-        <p className="text-sm font-bold">4 Tokens</p>
+
+        <p className="text-sm font-bold">
+          {totalTokens} Token{totalTokens === 1 ? "" : "s"}
+        </p>
       </div>
 
-      <div className="flex items-center gap-1">
-        <Icon className="flex-shrink-0" title="calendar" />
+      {unlocksAt !== 0 && (
+        <div className="flex items-center gap-1">
+          <Icon className="flex-shrink-0" title="calendar" />
 
-        {/* For Testing */}
-        <p className="text-sm font-bold">{isWithdrawalDateClose ? "12 days" : "30 days"}</p>
-      </div>
+          <p className="text-sm font-bold">
+            {formatDistanceToNow(unlocksAt, {
+              addSuffix: true,
+            })}
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center gap-5">
-        <ToolTip text="Extend unlock date">
-          <span
-            className={cn(
-              "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
-              isWithdrawalDateClose ? "bg-[#45350D]" : "bg-backgroundDark",
-            )}
-            onClick={() => router.push("/legacy/release-date")}
-          >
-            {isWithdrawalDateClose ? (
-              <Icon className="flex-shrink-0" title="stop-watch-warning" width={16} height={16} />
-            ) : (
-              <Icon className="flex-shrink-0" title="stop-watch" width={16} height={16} />
-            )}
-          </span>
-        </ToolTip>
+        {legacyDateCheck === legacyUnlockDateCheckStatus.NotSet ? (
+          <ToolTip text="No unlock date has been set. Any allocation can be withdrawn by set beneficiaries immediately">
+            <span
+              className={
+                "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition bg-red-700/30"
+              }
+              onClick={() => router.push("/legacy/release-date")}
+            >
+              <Icon className="flex-shrink-0 [&_path]:fill-red-400" title="stop-watch" width={16} height={16} />
+            </span>
+          </ToolTip>
+        ) : (
+          <ToolTip text="Extend unlock date">
+            <span
+              className={cn(
+                "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
+                isWithdrawalDateClose ? "bg-[#45350D]" : "bg-backgroundDark",
+              )}
+              onClick={() => router.push("/legacy/release-date")}
+            >
+              {isWithdrawalDateClose ? (
+                <Icon className="flex-shrink-0" title="stop-watch-warning" width={16} height={16} />
+              ) : (
+                <Icon className="flex-shrink-0" title="stop-watch" width={16} height={16} />
+              )}
+            </span>
+          </ToolTip>
+        )}
 
         <ToolTip text="View will">
           <span
