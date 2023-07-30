@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
+import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache } from "@apollo/client";
 import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import NextNProgress from "nextjs-progressbar";
@@ -16,6 +17,22 @@ import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 import { darkerGrotesque, inter } from "~~/utils/fonts";
 
+const localSubgraph = new HttpLink({
+  uri: "https://localhost:8000/subgraphs/name/ghostffcode/token-legacy",
+});
+
+const optimismSubgraph = new HttpLink({
+  uri: "https://api.thegraph.com/subgraphs/name/ghostffcode/token-legacy",
+});
+
+const cache = new InMemoryCache();
+
+const client = new ApolloClient({
+  link: ApolloLink.split(operation => operation.getContext().clientName === "10", optimismSubgraph, localSubgraph),
+  cache,
+  connectToDevTools: true,
+});
+
 const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   const price = useNativeCurrencyPrice();
   const setNativeCurrencyPrice = useGlobalState(state => state.setNativeCurrencyPrice);
@@ -27,22 +44,24 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [setNativeCurrencyPrice, price]);
 
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <NextNProgress />
-      <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
-        <div className="flex flex-col min-h-screen">
-          {/* <Header /> */}
-          <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
-            <Component {...pageProps} />
-          </main>
-          {/* <Footer /> */}
-        </div>
+    <ApolloProvider client={client}>
+      <WagmiConfig config={wagmiConfig}>
+        <NextNProgress />
+        <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
+          <div className="flex flex-col min-h-screen">
+            {/* <Header /> */}
+            <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
+              <Component {...pageProps} />
+            </main>
+            {/* <Footer /> */}
+          </div>
 
-        <Toaster />
-        <DevAccount />
-        {/* <Toaster /> */}
-      </RainbowKitProvider>
-    </WagmiConfig>
+          <Toaster />
+          <DevAccount />
+          {/* <Toaster /> */}
+        </RainbowKitProvider>
+      </WagmiConfig>
+    </ApolloProvider>
   );
 };
 
