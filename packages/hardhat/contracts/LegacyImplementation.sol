@@ -28,6 +28,7 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 
 	function initialize(address _owner) public initializer {
 		require(_owner != address(0), "Can't burn a legacy");
+		deadline = block.timestamp + 7 days;
 		owner = _owner;
 	}
 

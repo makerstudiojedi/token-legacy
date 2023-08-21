@@ -2,6 +2,9 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import avatar from "../../../public/avatar1.svg";
+import { isAddress } from "viem";
+import { useEnsName } from "wagmi";
+import { FetchTokenResult } from "wagmi/dist/actions";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import { EditableField } from "~~/components/EditableField";
 import Icon from "~~/components/Icons";
@@ -13,11 +16,13 @@ import { shortenAddress } from "~~/utils/helpers";
 interface LoadAddressProps {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
-  onSave?: () => void;
+  onSave?: (_share?: number) => Promise<void>;
   onClose?: () => void;
+  address: `0x${string}`;
   allotShare?: boolean;
   tokenShare: number;
   remainingShare: number;
+  tokenData: FetchTokenResult;
 }
 
 const LoadAddress: React.FC<LoadAddressProps> = ({
@@ -25,15 +30,24 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
   onOpenChange,
   onSave,
   onClose,
+  address,
   allotShare = true,
   tokenShare,
   remainingShare,
+  tokenData,
 }): JSX.Element => {
   const [allotedShare, setAllotedShare] = useState<number>(tokenShare);
-  const address = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
 
-  const onSavehandler = () => {
-    if (onSave) onSave();
+  const { data: ensName } = useEnsName({
+    address,
+    enabled: isAddress(address),
+    chainId: 1,
+  });
+
+  const onSavehandler = async () => {
+    if (onSave) {
+      await onSave(allotedShare);
+    }
 
     onOpenChange(false);
   };
@@ -69,9 +83,9 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <h3 className="font-bold">emu.eth</h3>
+          <h3 className="font-bold">{ensName ?? "- -"}</h3>
 
-          <AddToClipboard text="emu.eth" copiedText="ENS copied">
+          <AddToClipboard text={address} copiedText="ENS copied">
             <Icon title="copy" />
           </AddToClipboard>
         </div>
@@ -111,7 +125,9 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
           <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
             <Icon title="star" />
 
-            <h6>You have {remainingShare - allotedShare}% USDC left to allocate</h6>
+            <h6>
+              You have {remainingShare - allotedShare}% {tokenData?.symbol} left to allocate
+            </h6>
           </div>
         </div>
 

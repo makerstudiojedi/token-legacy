@@ -7,10 +7,9 @@ dataSources:
     name: Legacy
     network: localhost
     source:
-      address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9'
+      address: '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
       abi: LegacyFactory
-      startBlock: 0
-      # startBlock: 
+      startBlock: 22
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

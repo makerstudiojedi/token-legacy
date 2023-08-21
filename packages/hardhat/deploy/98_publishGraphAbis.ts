@@ -8,7 +8,7 @@ const deploymentsDir = "./deployments";
 function publishContract(contractName: string, networkName: string) {
   try {
     const _contract = fs.readFileSync(`${deploymentsDir}/${networkName}/${contractName}.json`).toString();
-    const contract = JSON.parse(_contract) as { address: string; abi: any };
+    const contract = JSON.parse(_contract) as { address: string; abi: any; receipt: { blockNumber: number } };
     const TARGET_DIR = `${graphDir}/config`;
     const graphConfigPath = `${TARGET_DIR}/${networkName}.json`;
 
@@ -27,6 +27,7 @@ function publishContract(contractName: string, networkName: string) {
 
     const update = {
       network: networkName,
+      block: contract.receipt.blockNumber,
       [contractName]: contract.address,
     };
 

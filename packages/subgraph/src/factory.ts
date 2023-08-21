@@ -14,21 +14,25 @@ export function handleLegacyCreated(event: LegacyCreated): void {
   let legacy = Legacy.load(legacyString);
 
   if (legacy) {
-    log.warning("Legacy already exists", [ownerString, legacyString]);
+    log.warning("Legacy already exists {}, {}", [ownerString, legacyString]);
     return;
   }
 
   const legacyContract = LegacyImplementationContract.bind(event.params.legacy);
 
+  // let deadline = legacyContract.deadline();
+
+  log.info("Legacy creating {} {}", [ legacyString, ownerString ]);
+
   legacy = new Legacy(legacyString);
-  legacy.unlocksAt = BigInt.fromI32(0);
+  legacy.unlocksAt = legacyContract.deadline();
   legacy.createdAt = event.block.timestamp;
   legacy.updatedAt = event.block.timestamp;
   legacy.transactionHash = event.transaction.hash.toHexString();
 
   if (user === null) {
     user = new User(ownerString);
-    user.address = event.params.owner;
+    user.address = event.params.owner.toHexString();
     user.createdAt = event.block.timestamp;
   } else {
     user.legacy = legacy.id;

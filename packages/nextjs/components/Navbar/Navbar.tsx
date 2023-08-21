@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AddressBadge } from "../AddressBadge";
 import Icon from "../Icons";
@@ -6,9 +7,11 @@ import { Button } from "../ui/button";
 import styles from "./Navbar.module.scss";
 import { useAccountModal } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
+import { TokenContext } from "~~/providers/TokenProvider";
 
 const Navbar: React.FC = (): JSX.Element => {
   const router = useRouter();
+  const { toggleTokenImporter } = useContext(TokenContext);
 
   const { address } = useAccount();
   const { openAccountModal } = useAccountModal();
@@ -25,10 +28,10 @@ const Navbar: React.FC = (): JSX.Element => {
         <ul>
           <li>
             {!isBeneficiaryPage ? (
-              <Button>
+              <Button onClick={() => toggleTokenImporter(true)}>
                 <Icon title="import" />
 
-                <span>Import tokens</span>
+                <span>Import token</span>
               </Button>
             ) : (
               <Button>

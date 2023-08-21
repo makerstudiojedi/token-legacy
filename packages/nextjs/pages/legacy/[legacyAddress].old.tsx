@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { formatDistance, isBefore } from "date-fns";
 import type { NextPage } from "next";
-import { getAddress, isAddress, zeroAddress } from "viem";
+import { getAddress, isAddress } from "viem";
 import { useAccount, useEnsName } from "wagmi";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
@@ -10,6 +10,7 @@ import { NFTCard } from "~~/components/NFTCard";
 import { Token } from "~~/components/Token";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useFetchLegacyQuery } from "~~/gql/types.generated";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { shortenAddress } from "~~/utils/helpers";
 
 const LegacyPage: NextPage = (): JSX.Element => {
@@ -18,30 +19,32 @@ const LegacyPage: NextPage = (): JSX.Element => {
 
   const legacyAddress = (router.query.legacyAddress ?? "") as string;
 
-  const { data: legacyData, loading } = useFetchLegacyQuery({
+  const { data: legacyData } = useFetchLegacyQuery({
     variables: {
       address: legacyAddress.toLowerCase(),
     },
   });
 
-  // TODO : Refetch after each tx that isn't an allowance
+  console.log(legacyData);
 
   const unlocksAt = (legacyData?.legacy?.unlocksAt ?? 0) * 1000;
   const ownerAddress = (legacyData?.legacy?.owner.id as `0x${string}`) ?? "";
   const isLegacyOwner =
-    !loading &&
-    getAddress((address as `0x${string}`) || zeroAddress) ===
-      getAddress((legacyData?.legacy?.owner.id as `0x${string}`) || zeroAddress);
+    getAddress(address as `0x${string}`) === getAddress(legacyData?.legacy?.owner.id as `0x${string}`);
   const unlocked = isBefore(new Date(unlocksAt), Date.now());
-  const tokenList = legacyData?.legacy?.tokens;
 
   const { data: ownerEns } = useEnsName({
     address: ownerAddress,
     enabled: isAddress(ownerAddress),
-    chainId: 1,
   });
 
   const ownerDisplay = ownerEns || shortenAddress(ownerAddress);
+
+  // const { data } = useScaffoldContractRead({
+  //   contractName: "LegacyImplementation",
+  //   functionName: "owner",
+  //   address: legacyAddress as `0x${string}`,
+  // });
 
   return (
     <WalletLayout>
@@ -83,28 +86,10 @@ const LegacyPage: NextPage = (): JSX.Element => {
           </div>
 
           <div className="max-w-[400px] mx-auto mt-12">
-            {isLegacyOwner && (
-              <>
-                <div className="flex items-center gap-4 px-1">
-                  <div className="h-px bg-[#3F5876] flex-grow"></div>
-                  <p className="font-medium">Your Token Allocations</p>
-                  <div className="h-px bg-[#3F5876] flex-grow"></div>
-                </div>
-                <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
-                  <div className="space-y-3">
-                    {tokenList?.map(tokenItem => (
-                      <Token key={tokenItem.id} owner={ownerAddress} token={tokenItem} />
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Your Allocations */}
-            {/* <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4">
               <div className="h-px bg-[#3F5876] flex-grow"></div>
 
-              <p className="font-medium">Allocations For You</p>
+              <p className="font-medium">Your Allocations</p>
 
               <div className="h-px bg-[#3F5876] flex-grow"></div>
             </div>
@@ -115,11 +100,18 @@ const LegacyPage: NextPage = (): JSX.Element => {
                 <Token permissionGranted={true} />
                 <Token permissionGranted={false} />
               </div>
-            </div> */}
+
+              {/* <div className="h-px w-full bg-[#273B53] my-8"></div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <NFTCard readOnly />
+                <NFTCard readOnly />
+              </div> */}
+            </div>
 
             {/* Other Allocations */}
 
-            {/* <div className="flex items-center gap-4 mt-10">
+            <div className="flex items-center gap-4 mt-10">
               <div className="h-px bg-[#3F5876] flex-grow"></div>
               <p className="font-medium">Other Allocations</p>
               <div className="h-px bg-[#3F5876] flex-grow"></div>
@@ -140,7 +132,7 @@ const LegacyPage: NextPage = (): JSX.Element => {
                 <NFTCard readOnly />
                 <NFTCard readOnly />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

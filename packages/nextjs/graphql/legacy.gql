@@ -10,6 +10,32 @@ query fetchLegacy($address: ID!) {
     tokens {
       id
       token
+      totalAllocation
+      allocations {
+        id
+      }
+    }
+  }
+}
+
+query tokenAllocations($legacy: ID!, $token: String!) {
+  legacy(id: $legacy) {
+    owner {
+      address
+    }
+    tokens (where: { token: $token }) {
+      id
+      totalAllocation
+      allocations ( where: { percentage_gt: 0 }, orderBy: createdAt, orderDirection: asc) {
+        id
+        percentage
+        to {
+          id
+          address
+        }
+        createdAt
+        updatedAt
+      }
     }
   }
 }

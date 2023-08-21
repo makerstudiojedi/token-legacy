@@ -16,6 +16,7 @@ import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 import { darkerGrotesque, inter } from "~~/utils/fonts";
+import TokenProvider from "~~/providers/TokenProvider";
 
 const localSubgraph = new HttpLink({
   uri: "http://localhost:8000/subgraphs/name/ghostffcode/token-legacy",
@@ -48,13 +49,15 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
       <WagmiConfig config={wagmiConfig}>
         <NextNProgress />
         <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
-          <div className="flex flex-col min-h-screen">
-            {/* <Header /> */}
-            <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
-              <Component {...pageProps} />
-            </main>
-            {/* <Footer /> */}
-          </div>
+          <TokenProvider>
+            <div className="flex flex-col min-h-screen">
+              {/* <Header /> */}
+              <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
+                <Component {...pageProps} />
+              </main>
+              {/* <Footer /> */}
+            </div>
+          </TokenProvider>
 
           <Toaster />
           <DevAccount />

@@ -148,6 +148,7 @@ export type UseScaffoldReadConfig<
   TFunctionName extends ExtractAbiFunctionNames<ContractAbi<TContractName>, ReadAbiStateMutability>,
 > = {
   contractName: TContractName;
+  address?: `0x${string}`;
 } & IsContractDeclarationMissing<
   Partial<UseContractReadConfig>,
   {
@@ -162,6 +163,7 @@ export type UseScaffoldWriteConfig<
 > = {
   contractName: TContractName;
   onBlockConfirmation?: (txnReceipt: TransactionReceipt) => void;
+  address?: `0x${string}`;
   blockConfirmations?: number;
 } & IsContractDeclarationMissing<
   Partial<Omit<UseContractWriteConfig, "value"> & { value: `${number}` }>,
