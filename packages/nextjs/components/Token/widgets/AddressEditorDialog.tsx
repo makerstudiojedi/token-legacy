@@ -7,14 +7,14 @@ import { isAddress } from "viem";
 import { FetchTokenResult } from "wagmi/dist/actions";
 import Icon from "~~/components/Icons";
 import { Loader } from "~~/components/Loader";
+import { AddressInput } from "~~/components/scaffold-eth";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 import { cn } from "~~/lib/utils";
-import { AddressInput } from "~~/components/scaffold-eth";
 
 interface AddressEditorDialogProps {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
-  onSave?: (address: `0x${string}`, amount?: number) => Promise<void>;
+  onSave?: (address: `0x${string}`, amount?: number) => Promise<any>;
   tokenData: FetchTokenResult | undefined;
   leftOver: number;
   allotShare?: boolean;

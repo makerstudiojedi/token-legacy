@@ -17,42 +17,42 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   if (chainId === "31337") {
     await deploy("Token", {
       from: deployer,
-      args: ["Wrapped ETH", "WETH", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["Wrapped ETH", "WETH", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,
     });
     await deploy("Token", {
       from: deployer,
-      args: ["Tether USDT", "USDT", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["Tether USDT", "USDT", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,
     });
     await deploy("Token", {
       from: deployer,
-      args: ["USD Coin", "USDC", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["USD Coin", "USDC", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,
     });
     await deploy("Token", {
       from: deployer,
-      args: ["Dai", "DAI", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["Dai", "DAI", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,
     });
     await deploy("Token", {
       from: deployer,
-      args: ["Chainlink", "LINK", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["Chainlink", "LINK", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,
     });
     await deploy("Token", {
       from: deployer,
-      args: ["Shiba Inu", "SHIB", "0x2B89186a1058e29465b50C9f3b11AB9B3d4B80C6"],
+      args: ["Shiba Inu", "SHIB", "0xBFF5D8E6658276C37dB62E414B90b5f50112fCa6"],
       log: true,
       autoMine: true,
       waitConfirmations,

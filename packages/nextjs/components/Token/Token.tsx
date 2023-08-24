@@ -3,30 +3,38 @@ import Image from "next/image";
 import ethereumIcon from "../../public/ethereum.svg";
 import Icon from "../Icons";
 import styles from "./Token.module.scss";
-import { isAddress } from "viem";
-import { useAccount, useBalance, useToken } from "wagmi";
+import { formatUnits, isAddress } from "viem";
+import { useToken } from "wagmi";
 import { Allocation, LegacyToken, Maybe } from "~~/gql/types.generated";
+import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { TokenContext } from "~~/providers/TokenProvider";
 import { shortenAddress } from "~~/utils/helpers";
 
 interface TokenProps {
   owner: `0x${string}`;
+  legacy: `0x${string}`;
   token: { __typename?: "LegacyToken" } & Pick<LegacyToken, "id" | "token" | "totalAllocation"> & {
       allocations?: Maybe<Array<{ __typename?: "Allocation" } & Pick<Allocation, "id">>>;
     };
 }
 
-const Token: React.FC<TokenProps> = ({ owner, token }): JSX.Element => {
+const Token: React.FC<TokenProps> = ({ owner, legacy, token }): JSX.Element => {
   const { setTokenAddress } = useContext(TokenContext);
   const tokenAddress = (token.token as `0x${string}`) || "";
-  const { data: tBalance } = useBalance({
-    address: owner,
-    token: tokenAddress,
-    enabled: isAddress(owner) && isAddress(tokenAddress),
-  });
+
   const { data } = useToken({
     address: tokenAddress,
   });
+
+  const { data: balance } = useScaffoldContractRead({
+    contractName: "LegacyImplementation",
+    functionName: "getTokenBalance",
+    address: legacy,
+    args: [tokenAddress],
+    enabled: isAddress(owner) && isAddress(tokenAddress),
+  });
+
+  const tBalance = balance && data?.decimals ? formatUnits(balance, Number(data.decimals)) : 0;
 
   const totalAllocations = (token.allocations || []).length;
   const allocationsLeft = 100 - (token.totalAllocation || 0);
@@ -47,7 +55,7 @@ const Token: React.FC<TokenProps> = ({ owner, token }): JSX.Element => {
 
         <div className="text-right">
           <p className="text-white font-bold">
-            {tBalance?.formatted} {tBalance?.symbol}
+            {tBalance} {data?.symbol}
           </p>
           <div className="text-[#3F5876] font-semibold flex items-center gap-2">
             <span className="flex items-center gap-[0.8px]">

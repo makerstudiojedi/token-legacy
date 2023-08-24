@@ -40,6 +40,7 @@ export function handleWillAdded(event: WillAdded): void {
     token = new LegacyToken(tokenId);
     token.token = tokenAddress.toHexString();
     token.legacy = legacy.id;
+    token.createdAt = event.block.timestamp;
   }
 
   if (beneficiary === null) {

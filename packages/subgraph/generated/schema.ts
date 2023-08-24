@@ -297,6 +297,15 @@ export class LegacyToken extends Entity {
       this.set("allocations", Value.fromStringArray(<Array<string>>value));
     }
   }
+
+  get createdAt(): BigInt {
+    let value = this.get("createdAt");
+    return value!.toBigInt();
+  }
+
+  set createdAt(value: BigInt) {
+    this.set("createdAt", Value.fromBigInt(value));
+  }
 }
 
 export class Allocation extends Entity {

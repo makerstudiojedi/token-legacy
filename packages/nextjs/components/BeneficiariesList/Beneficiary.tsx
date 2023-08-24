@@ -16,7 +16,7 @@ interface BeneficiaryProps {
   allocation: AllocationType;
   balance: number;
   tokenData: FetchTokenResult;
-  leftOver: number;
+  leftOver?: number;
   onSave: (_address: `0x${string}`, amount?: number) => Promise<void>;
 }
 
@@ -76,15 +76,17 @@ const Beneficiary: React.FC<BeneficiaryProps> = ({
         )}
       </div>
 
-      {tokenData && (
+      {!isReadOnly && (
         <BeneficiaryDetails
-          open={isDetailsDialogOpen}
-          onOpenChange={setIsDetailsDialogOpen}
-          address={address}
-          tokenData={tokenData}
-          tokenShare={allocation.percentage}
-          remainingShare={leftOver}
           onSave={onSave}
+          address={address}
+          balance={balance}
+          tokenData={tokenData}
+          allocation={allocation}
+          remainingShare={leftOver as number}
+          open={isDetailsDialogOpen}
+          tokenShare={allocation.percentage}
+          onOpenChange={setIsDetailsDialogOpen}
         />
       )}
     </>

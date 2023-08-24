@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import LoadAddress from "./LoadAddress";
@@ -29,11 +29,12 @@ const TokenImporter: React.FC<TokenImporterProps> = ({ open, onOpenChange, onSav
     enabled: isAddress(address as `0x${string}`),
   });
 
-  if (data?.address) {
-    const _address = address;
-    setAddress("");
-    setTokenAddress(_address);
-  }
+  useEffect(() => {
+    if (data?.address) {
+      setTokenAddress(data.address as `0x${string}`);
+      setAddress("");
+    }
+  }, [data?.address, setTokenAddress]);
 
   const handleDialogOpenChange = (open: boolean) => {
     if (isLoading) return null;

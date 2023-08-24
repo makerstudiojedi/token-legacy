@@ -15,13 +15,16 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Slider } from "~~/components/ui/slider";
 import { cn } from "~~/lib/utils";
 import { shortenAddress } from "~~/utils/helpers";
+import { AllocationType } from "../Beneficiary.types";
 
 interface BeneficiaryDetailsProps {
   open: boolean;
+  balance: number;
   onSave: (_address: `0x${string}`, amount?: number) => Promise<void>;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   address: `0x${string}`;
   tokenData: FetchTokenResult;
+  allocation: AllocationType;
   tokenShare: number;
   remainingShare: number;
 }
@@ -29,10 +32,12 @@ interface BeneficiaryDetailsProps {
 const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
   open,
   onSave,
+  balance,
   onOpenChange,
   address,
   tokenData,
   tokenShare,
+  allocation,
   remainingShare,
 }): JSX.Element => {
   const [isAddressEditorDialogOpen, setIsAddressEditorDialogOpen] = useState<boolean>(false);
@@ -54,7 +59,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
     onOpenChange(open);
   };
 
-  const onAddressEditorSaveHandler = () => {
+  const onAddressEditorSaveHandler = async () => {
     setIsAddressEditorDialogOpen(false);
     setIsEditing(false);
   };
@@ -168,7 +173,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
               <div className="w-full grid grid-cols-5 gap-14">
                 <Button
                   className="bg-[#273B53] border-white hover:bg-backgroundDark"
-                  onClick={async () => await onEditSaveHandler(address, 0)}
+                  onClick={() => setIsDeleteDialogOpen(true)}
                 >
                   <Icon title="delete" className="flex-shrink-0" />
                 </Button>
@@ -190,7 +195,14 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
         leftOver={remainingShare}
       />
 
-      <DeleteBeneficiary open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen} />
+      <DeleteBeneficiary
+        tokenData={tokenData}
+        allocation={allocation}
+        open={isDeleteDialogOpen}
+        balance={balance}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={() => onEditSaveHandler(address, 0)}
+      />
     </>
   );
 };

@@ -12,6 +12,7 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 
 	mapping(bytes32 => uint256) public wills;
 	mapping(address => uint256) public totalAllocations;
+	mapping (address => uint256) public tokenBalance;
 
 	event WillAdded(address indexed to, address token, uint256 percentage);
 	event WillWithdrawn(address indexed to, address token, uint256 percentage);
@@ -60,19 +61,36 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 		uint256 myPercentage = wills[willKey];
 
 		require(
-			deadline >= block.timestamp,
+			deadline <= block.timestamp,
 			"This allocation is not unlocked yet"
 		);
 		require(myPercentage > 0, "This allocation is empty");
 
 		wills[willKey] = 0;
 
-		uint256 allocationAmount = token.balanceOf(owner) *
-			(myPercentage / 100);
+		// TODO : Store & check if balance has changed since last withdrawal
+		// TODO : If balance > oldBalance, set value continue
+		// TODO : if balance < oldBalance, use oldBalance as calculation Point
+
+		uint256 oldBalance = tokenBalance[address(token)];
+		uint256 newBalance = token.balanceOf(owner);
+
+		uint256 _balance = (newBalance >= oldBalance || oldBalance == 0) ? newBalance : oldBalance;
+
+		tokenBalance[address(token)] = _balance;
+
+		uint256 allocationAmount = _balance * (myPercentage / 100);
 
 		token.transferFrom(owner, msg.sender, allocationAmount);
 
 		emit WillWithdrawn(msg.sender, address(token), myPercentage);
+	}
+
+	function getTokenBalance (IERC20 token) public view returns (uint256) {
+		uint256 oldBalance = tokenBalance[address(token)];
+		uint256 newBalance = token.balanceOf(owner);
+
+		return (newBalance >= oldBalance || oldBalance == 0) ? newBalance : oldBalance;
 	}
 
 	function getTotalAllocation(IERC20 token) public view returns (uint256) {

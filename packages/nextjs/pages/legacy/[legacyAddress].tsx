@@ -7,32 +7,44 @@ import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
 import WalletLayout from "~~/components/Layout";
 import { NFTCard } from "~~/components/NFTCard";
-import { Token } from "~~/components/Token";
+import { Token, TokenAllocation } from "~~/components/Token";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
-import { useFetchLegacyQuery } from "~~/gql/types.generated";
+import { useFetchLegacyQuery, useMyAllocationsQuery } from "~~/gql/types.generated";
+import { useGraphMeta } from "~~/hooks/useGraphMeta";
 import { shortenAddress } from "~~/utils/helpers";
 
 const LegacyPage: NextPage = (): JSX.Element => {
   const router = useRouter();
   const { address } = useAccount();
 
-  const legacyAddress = (router.query.legacyAddress ?? "") as string;
+  const legacyAddress = ((router.query.legacyAddress ?? "") as string).toLowerCase();
 
-  const { data: legacyData, loading } = useFetchLegacyQuery({
+  const {
+    data: legacyData,
+    loading,
+    refetch,
+  } = useFetchLegacyQuery({
     variables: {
       address: legacyAddress.toLowerCase(),
     },
   });
 
-  // TODO : Refetch after each tx that isn't an allowance
+  const { data: myAllocations } = useMyAllocationsQuery({
+    variables: {
+      myAddress: ((address as string) || "").toLowerCase(),
+      legacy: legacyAddress,
+    },
+  });
+
+  useGraphMeta(refetch);
 
   const unlocksAt = (legacyData?.legacy?.unlocksAt ?? 0) * 1000;
+  const unlocked = isBefore(new Date(unlocksAt), Date.now());
   const ownerAddress = (legacyData?.legacy?.owner.id as `0x${string}`) ?? "";
   const isLegacyOwner =
     !loading &&
     getAddress((address as `0x${string}`) || zeroAddress) ===
       getAddress((legacyData?.legacy?.owner.id as `0x${string}`) || zeroAddress);
-  const unlocked = isBefore(new Date(unlocksAt), Date.now());
   const tokenList = legacyData?.legacy?.tokens;
 
   const { data: ownerEns } = useEnsName({
@@ -87,13 +99,18 @@ const LegacyPage: NextPage = (): JSX.Element => {
               <>
                 <div className="flex items-center gap-4 px-1">
                   <div className="h-px bg-[#3F5876] flex-grow"></div>
-                  <p className="font-medium">Your Token Allocations</p>
+                  <p className="font-medium">Your Tokens</p>
                   <div className="h-px bg-[#3F5876] flex-grow"></div>
                 </div>
                 <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
                   <div className="space-y-3">
                     {tokenList?.map(tokenItem => (
-                      <Token key={tokenItem.id} owner={ownerAddress} token={tokenItem} />
+                      <Token
+                        token={tokenItem}
+                        key={tokenItem.id}
+                        owner={ownerAddress}
+                        legacy={legacyAddress as `0x${string}`}
+                      />
                     ))}
                   </div>
                 </div>
@@ -101,21 +118,31 @@ const LegacyPage: NextPage = (): JSX.Element => {
             )}
 
             {/* Your Allocations */}
-            {/* <div className="flex items-center gap-4">
-              <div className="h-px bg-[#3F5876] flex-grow"></div>
+            {(myAllocations?.allocations.length || 0) > 0 && (
+              <>
+                <div className="flex items-center gap-4">
+                  <div className="h-px bg-[#3F5876] flex-grow"></div>
 
-              <p className="font-medium">Allocations For You</p>
+                  <p className="font-medium">Your Allocations</p>
 
-              <div className="h-px bg-[#3F5876] flex-grow"></div>
-            </div>
+                  <div className="h-px bg-[#3F5876] flex-grow"></div>
+                </div>
 
-            <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
-              <div className="space-y-3">
-                <Token permissionGranted={false} />
-                <Token permissionGranted={true} />
-                <Token permissionGranted={false} />
-              </div>
-            </div> */}
+                <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
+                  <div className="space-y-3">
+                    {myAllocations?.allocations.map(allocation => (
+                      <TokenAllocation
+                        key={allocation.id}
+                        unlocked={unlocked}
+                        owner={ownerAddress}
+                        legacy={legacyAddress as `0x${string}`}
+                        allocation={allocation}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Other Allocations */}
 

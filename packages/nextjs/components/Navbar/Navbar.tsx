@@ -23,7 +23,7 @@ const Navbar: React.FC = (): JSX.Element => {
   return (
     <header className={styles.Navbar}>
       <nav>
-        <Logo className="cursor-pointer hover:opacity-70 transition" onClick={() => router.push("/wallet")} />
+        <Logo className="cursor-pointer hover:opacity-70 transition" onClick={() => router.push("/")} />
 
         <ul>
           <li>
@@ -43,7 +43,7 @@ const Navbar: React.FC = (): JSX.Element => {
           </li>
 
           <li>
-            <Button size={"icon"} variant={"icon"} onClick={() => router.push("/wallet/release-date")}>
+            <Button size={"icon"} variant={"icon"} onClick={() => router.push("/legacy/release-date")}>
               <Icon title="stop-watch" />
             </Button>
           </li>

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import avatar from "../../../public/avatar1.svg";
 import { isAddress } from "viem";
-import { useEnsName } from "wagmi";
+import { useEnsAvatar, useEnsName } from "wagmi";
 import { FetchTokenResult } from "wagmi/dist/actions";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import { EditableField } from "~~/components/EditableField";
@@ -44,6 +44,12 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
     chainId: 1,
   });
 
+  const { data: ensAvatar } = useEnsAvatar({
+    name: ensName,
+    enabled: !!ensName,
+    chainId: 1,
+  });
+
   const onSavehandler = async () => {
     if (onSave) {
       await onSave(allotedShare);
@@ -62,6 +68,10 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
     onOpenChange(open);
   };
 
+  useEffect(() => {
+    setAllotedShare(tokenShare);
+  }, [address, tokenShare]);
+
   return (
     <Dialog open={open} onOpenChange={open => handleDialogOpenChange(open)}>
       <DialogContent className="sm:max-w-[393px] gap-4">
@@ -78,8 +88,8 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
           <Image src={addBeneficiaryBg} className="object-cover w-full h-full" alt="add-beneficiary-bg" />
         </div>
 
-        <div className="h-28 w-28 bg-[#143B5F] flex items-center justify-center mx-auto rounded-full relative mt-12">
-          <Image src={avatar} className="object-cover w-full h-full" alt="avatar" />
+        <div className="h-28 w-28 bg-[#143B5F] flex items-center justify-center mx-auto rounded-full relative mt-12 overflow-hidden">
+          <Image src={ensAvatar || avatar} fill className="object-cover w-full h-full" alt="avatar" />
         </div>
 
         <div className="flex items-center justify-center gap-2">

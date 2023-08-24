@@ -7,19 +7,32 @@ query fetchLegacy($address: ID!) {
     owner {
       id
     }
-    tokens {
+    tokens (orderBy: createdAt, orderDirection: asc) {
       id
       token
       totalAllocation
-      allocations {
+      allocations ( where: { percentage_gt: 0 }) {
         id
       }
     }
   }
 }
 
-query tokenAllocations($legacy: ID!, $token: String!) {
+query myAllocations ($myAddress: String!, $legacy: String!) {
+  allocations (where: { to: $myAddress, legacy: $legacy, percentage_gt: 0 }, orderBy: createdAt) {
+    id
+    percentage
+    createdAt
+    withdrawn
+    token {
+      token
+    }
+  }
+}
+
+query tokenAllocations($legacy: ID!, $token: String!, $beneficiary: String!) {
   legacy(id: $legacy) {
+    unlocksAt
     owner {
       address
     }
@@ -36,6 +49,18 @@ query tokenAllocations($legacy: ID!, $token: String!) {
         createdAt
         updatedAt
       }
+    }
+  }
+  allocations(where: { to: $beneficiary, token_: { token: $token } }) {
+    id
+    withdrawn
+  }
+}
+
+query latestBlock {
+  _meta {
+    block {
+      number
     }
   }
 }

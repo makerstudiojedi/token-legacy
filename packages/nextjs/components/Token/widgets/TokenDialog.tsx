@@ -1,27 +1,22 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ethereumIcon from "../../../public/ethereum.svg";
 import AddressEditorDialog from "./AddressEditorDialog";
+import { isBefore } from "date-fns";
 import { MaxUint256 } from "ethers";
 import { isAddress } from "ethers";
-import { getAddress } from "viem";
-import {
-  erc20ABI,
-  useAccount,
-  useBalance,
-  useContractRead,
-  useContractWrite,
-  useToken,
-  useWatchPendingTransactions,
-} from "wagmi";
+import { formatUnits, getAddress } from "viem";
+import { erc20ABI, useAccount, useBalance, useContractRead, useContractWrite, useToken } from "wagmi";
 import { BeneficiariesList } from "~~/components/BeneficiariesList";
 import { DonutChart } from "~~/components/DonutChart";
 import Icon from "~~/components/Icons";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 import { useTokenAllocationsQuery } from "~~/gql/types.generated";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useGraphMeta } from "~~/hooks/useGraphMeta";
+import { useGraphStore } from "~~/services/store/graphstore";
 import { shortenAddress } from "~~/utils/helpers";
 
 interface TokenDialogProps {
@@ -32,6 +27,7 @@ interface TokenDialogProps {
 
 const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }): JSX.Element => {
   const [isAddBeneficiaryDialogOpen, setIsAddBeneficiaryDialogOpen] = useState<boolean>(false);
+  const [setLatestActionBlock] = useGraphStore(state => [state.setLatestActionBlock]);
   const router = useRouter();
   const { address: _loggedInUser } = useAccount();
   const loggedInUser = _loggedInUser as `0x${string}`;
@@ -42,12 +38,17 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
     variables: {
       legacy: legacyAddress?.toLowerCase(),
       token: token?.toLowerCase(),
+      beneficiary: loggedInUser?.toLowerCase(),
     },
   });
 
   // TODO : Refetch subgraph data after every onchain interaction
+  useGraphMeta(refetch);
 
   const legacyTokenData = (legacyWithToken?.legacy?.tokens || [])[0];
+
+  const unlocksAt = (legacyWithToken?.legacy?.unlocksAt ?? 0) * 1000;
+  const unlocked = isBefore(new Date(unlocksAt), Date.now());
 
   const totalAllocation = legacyTokenData?.totalAllocation || 0;
   const totalUsersAllocated = legacyTokenData?.allocations?.length || 0;
@@ -58,13 +59,18 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
     enabled: isAddress(token),
   });
 
-  const { data: tBalance } = useBalance({
-    address: legacyOwner,
-    token,
-    enabled: isAddress(token) && isAddress(legacyOwner),
+  const { data: tBalance } = useScaffoldContractRead({
+    contractName: "LegacyImplementation",
+    functionName: "getTokenBalance",
+    address: legacyAddress,
+    args: [token],
+    enabled: isAddress(legacyOwner) && isAddress(token),
   });
 
-  const { data: allowance, isLoading: isLoadingAllowance } = useContractRead({
+  const formattedBalance =
+    tBalance && tokenData?.decimals ? Number(formatUnits(tBalance, Number(tokenData.decimals))) : 0;
+
+  const { data: allowance } = useContractRead({
     address: token,
     abi: erc20ABI,
     functionName: "allowance",
@@ -85,20 +91,30 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
     functionName: "willToken",
     address: router.query.legacyAddress as `0x${string}`,
     args: ["", tokenData?.address, 0n],
-    onBlockConfirmation: () => {
-      // TODO : Have a way to wait till thegraph catches up
-      return new Promise((res, rej) => {
-        setTimeout(async () => {
-          try {
-            await refetch();
-            res(null);
-          } catch (error) {
-            rej(error);
-          }
-        }, 5000);
-      });
+    onBlockConfirmation: async txReceipt => {
+      setLatestActionBlock(Number(txReceipt.blockNumber));
     },
   });
+  const { writeAsync: sendWithdrawalTransaction } = useScaffoldContractWrite({
+    contractName: "LegacyImplementation",
+    functionName: "withdraw",
+    address: router.query.legacyAddress as `0x${string}`,
+    args: ["" as `0x${string}`],
+    onBlockConfirmation: async txReceipt => {
+      setLatestActionBlock(Number(txReceipt.blockNumber));
+    },
+  });
+
+  const permissionGranted =
+    allowance !== undefined ? allowance !== 0n && (allowance as bigint) >= (tBalance as bigint) : undefined;
+  const isLegacyOwner = loggedInUser && legacyOwner ? getAddress(loggedInUser) === getAddress(legacyOwner) : false;
+  const isBeneficiary = (legacyWithToken?.allocations.length || 0) > 0;
+
+  const handleAllocationWithdrawal = async () => {
+    await sendWithdrawalTransaction({
+      args: [token as `0x${string}`],
+    });
+  };
 
   const handleSaveUserAllocation = async (uAddress: `0x${string}`, amount?: number) => {
     await allocateTokenToUser({
@@ -106,13 +122,10 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
     });
   };
 
-  const permissionGranted = allowance ? (allowance as bigint) >= (tBalance?.value as bigint) : false;
-  const isLegacyOwner = loggedInUser && legacyOwner ? getAddress(loggedInUser) === getAddress(legacyOwner) : false;
-
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        {!!allowance && (
+        {permissionGranted !== undefined && (
           <>
             {permissionGranted ? (
               <DialogContent className="sm:max-w-[393px] flex flex-col gap-6">
@@ -122,8 +135,8 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
                   {/* <Icon title="approximate" /> */}
 
                   <div className="font-semibold flex items-center gap-2">
-                    <span className="text-2xl">{tBalance?.symbol}</span>
-                    <h2 className="text-white">{tBalance?.formatted}</h2>
+                    <span className="text-2xl">{tokenData?.symbol}</span>
+                    <h2 className="text-white">{formattedBalance}</h2>
                   </div>
                 </div>
 
@@ -149,27 +162,39 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
                   </div>
                 </div>
 
-                {(legacyTokenData?.allocations?.length || 0) > 0 && tokenData && tBalance && (
+                {(legacyTokenData?.allocations?.length || 0) > 0 && tokenData && formattedBalance !== undefined && (
                   <BeneficiariesList
                     allocations={legacyTokenData?.allocations || []}
                     tokenData={tokenData}
-                    balance={Number(tBalance?.formatted)}
+                    balance={formattedBalance}
                     leftOver={100 - totalAllocation}
                     isReadOnly={!isLegacyOwner}
                     onSave={handleSaveUserAllocation}
                   />
                 )}
 
-                {Number(totalAllocation) !== 100 && (
+                {((isLegacyOwner && Number(totalAllocation) !== 100) ||
+                  !((isBeneficiary && legacyWithToken?.allocations[0]) || {}).withdrawn) && (
                   <DialogFooter>
                     <Button
                       className="w-full"
-                      disabled={Number(totalAllocation) === 100}
-                      onClick={() => setIsAddBeneficiaryDialogOpen(true)}
+                      disabled={(isLegacyOwner && Number(totalAllocation) === 100) || (isBeneficiary && !unlocked)}
+                      onClick={async () => {
+                        if (isLegacyOwner) {
+                          setIsAddBeneficiaryDialogOpen(true);
+                        } else {
+                          await handleAllocationWithdrawal();
+                        }
+                      }}
                     >
-                      <Icon title="beneficiaries" />
-
-                      <span>Add Beneficiary</span>
+                      {isLegacyOwner ? (
+                        <>
+                          <Icon title="beneficiaries" />
+                          <span>Add Beneficiary</span>
+                        </>
+                      ) : (
+                        <span>{unlocked ? "Withdraw Allocation" : "Withdrawals not available yet"}</span>
+                      )}
                     </Button>
                   </DialogFooter>
                 )}
@@ -182,8 +207,8 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
                   {/* <Icon title="approximate" /> */}
 
                   <div className="font-semibold flex items-center gap-2">
-                    <span className="text-2xl">{tBalance?.symbol}</span>
-                    <h2 className="text-white">{tBalance?.formatted}</h2>
+                    <span className="text-2xl">{tokenData?.symbol}</span>
+                    <h2 className="text-white">{formattedBalance}</h2>
                   </div>
                 </div>
 
@@ -193,7 +218,8 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
                   <div className="text-[#08121D]">
                     <span className="text-xl font-bold text-">Increase {tokenData?.symbol} allowance</span>
                     <p className="font-medium mt-3 text-sm">
-                      A smart contract will like to connect to your wallet to allocate resources based on your settings.
+                      Your legacy needs to be able to interact with your {tokenData?.symbol} contract balance. For this,
+                      it requires an allowance. Please set your token allowance to continue with this token.
                     </p>
                   </div>
                 </div>

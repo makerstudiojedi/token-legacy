@@ -24,6 +24,7 @@ type LegacyToken @entity {
   legacy: Legacy!
   totalAllocation: BigInt!
   allocations: [Allocation!] @derivedFrom(field: "token")
+  createdAt: BigInt!
 }
 
 type Allocation @entity {
