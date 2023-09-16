@@ -11,12 +11,12 @@ import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Toaster } from "~~/components/ui/toaster";
 import { useNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { cn } from "~~/lib/utils";
+import TokenProvider from "~~/providers/TokenProvider";
 import { useGlobalState } from "~~/services/store/store";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import "~~/styles/globals.css";
 import { darkerGrotesque, inter } from "~~/utils/fonts";
-import TokenProvider from "~~/providers/TokenProvider";
 
 const localSubgraph = new HttpLink({
   uri: "http://localhost:8000/subgraphs/name/ghostffcode/token-legacy",

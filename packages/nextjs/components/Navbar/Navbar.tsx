@@ -6,7 +6,7 @@ import Logo from "../Logo/Logo";
 import { Button } from "../ui/button";
 import styles from "./Navbar.module.scss";
 import { useAccountModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useEnsName } from "wagmi";
 import { TokenContext } from "~~/providers/TokenProvider";
 
 const Navbar: React.FC = (): JSX.Element => {
@@ -15,6 +15,13 @@ const Navbar: React.FC = (): JSX.Element => {
 
   const { address } = useAccount();
   const { openAccountModal } = useAccountModal();
+
+  const { data: ensName } = useEnsName({
+    address: address as `0x${string}`,
+    chainId: 1,
+  });
+
+  console.log({ ensName });
 
   const pathname = usePathname() ?? "";
 
@@ -49,7 +56,7 @@ const Navbar: React.FC = (): JSX.Element => {
           </li>
 
           <li>
-            <AddressBadge address={address ?? ""} onClick={openAccountModal} />
+            <AddressBadge address={(ensName || address) ?? ""} onClick={openAccountModal} />
           </li>
         </ul>
       </nav>
