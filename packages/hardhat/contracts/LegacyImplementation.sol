@@ -9,10 +9,11 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 contract LegacyImplementation is Initializable, ReentrancyGuard {
 	address public owner;
 	uint256 public deadline;
+	uint256 public decimal = 100;
 
 	mapping(bytes32 => uint256) public wills;
 	mapping(address => uint256) public totalAllocations;
-	mapping (address => uint256) public tokenBalance;
+	mapping(address => uint256) public tokenBalance;
 
 	event WillAdded(address indexed to, address token, uint256 percentage);
 	event WillWithdrawn(address indexed to, address token, uint256 percentage);
@@ -39,16 +40,34 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 		emit ProofUpdated(_deadline);
 	}
 
-	function willToken(address to, IERC20 token, uint256 percentage) public {
+	function willToken(
+		address to,
+		IERC20 token,
+		uint256 percentage
+	) public onlyOwner {
+		require(to != address(0), "Can't transfer to zero address");
+		require(percentage >= 0 && percentage <= decimal, "Invalid percentage");
+
 		address tokenAddress = address(token);
 		bytes32 willKey = keccak256(abi.encode(to, tokenAddress));
+		uint256 _totalAllocations = totalAllocations[tokenAddress];
 
 		uint256 currentWill = wills[willKey];
-		uint256 newAllocation = totalAllocations[tokenAddress] -
-			currentWill +
-			percentage;
 
-		require(newAllocation <= 100, "Allocatable amount exceeded");
+		require(
+			currentWill <= _totalAllocations,
+			"Current allocation is greater than total allocation"
+		);
+
+		uint256 newAllocation = _totalAllocations + percentage;
+		require(newAllocation >= _totalAllocations, "Overflow detected");
+
+		newAllocation -= currentWill;
+
+		require(
+			newAllocation >= 0 && newAllocation <= decimal,
+			"Allocatable amount exceeded"
+		);
 
 		wills[willKey] = percentage;
 		totalAllocations[tokenAddress] = newAllocation;
@@ -68,29 +87,32 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 
 		wills[willKey] = 0;
 
-		// TODO : Store & check if balance has changed since last withdrawal
-		// TODO : If balance > oldBalance, set value continue
-		// TODO : if balance < oldBalance, use oldBalance as calculation Point
-
 		uint256 oldBalance = tokenBalance[address(token)];
 		uint256 newBalance = token.balanceOf(owner);
 
-		uint256 _balance = (newBalance >= oldBalance || oldBalance == 0) ? newBalance : oldBalance;
+		uint256 _balance = (newBalance >= oldBalance || oldBalance == 0)
+			? newBalance
+			: oldBalance;
 
 		tokenBalance[address(token)] = _balance;
 
-		uint256 allocationAmount = _balance * (myPercentage / 100);
+		uint256 allocationAmount = (_balance * myPercentage) / decimal;
 
-		token.transferFrom(owner, msg.sender, allocationAmount);
+		bool success = token.transferFrom(owner, msg.sender, allocationAmount);
+
+		require(success, "Allocation withdrawal failed");
 
 		emit WillWithdrawn(msg.sender, address(token), myPercentage);
 	}
 
-	function getTokenBalance (IERC20 token) public view returns (uint256) {
+	function getTokenBalance(IERC20 token) public view returns (uint256) {
 		uint256 oldBalance = tokenBalance[address(token)];
 		uint256 newBalance = token.balanceOf(owner);
 
-		return (newBalance >= oldBalance || oldBalance == 0) ? newBalance : oldBalance;
+		return
+			(newBalance >= oldBalance || oldBalance == 0)
+				? newBalance
+				: oldBalance;
 	}
 
 	function getTotalAllocation(IERC20 token) public view returns (uint256) {
