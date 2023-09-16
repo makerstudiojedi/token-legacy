@@ -1,20 +1,32 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { CalendarDialog } from "~~/components/CalendarDialog";
 import WalletLayout from "~~/components/Layout";
 import { Button } from "~~/components/ui/button";
 import { toast } from "~~/components/ui/use-toast";
+import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { cn } from "~~/lib/utils";
 
 const ReleaseDatePage: NextPage = (): JSX.Element => {
+  const router = useRouter();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isDateChanged, setIsDateChanged] = useState<boolean>(false);
+
+  const legacyAddress = ((router.query.legacyAddress ?? "") as string).toLowerCase();
 
   const onApplyDateHandler = (newDate: Date | undefined) => {
     setDate(newDate);
     setIsDateChanged(true);
   };
+
+  const { writeAsync: updateReleaseDate } = useScaffoldContractWrite({
+    contractName: "LegacyImplementation",
+    functionName: "registerProof",
+    address: legacyAddress as `0x${string}`,
+    args: [0n],
+  });
 
   const onSaveDateHandler = async () => {
     if (typeof date === "undefined") {
@@ -27,7 +39,8 @@ const ReleaseDatePage: NextPage = (): JSX.Element => {
     setIsLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 4000));
+      // await new Promise(resolve => setTimeout(resolve, 4000));
+      await updateReleaseDate({ args: [BigInt(date.getTime() / 1000)] });
       // router.push("/wallet")
 
       toast({

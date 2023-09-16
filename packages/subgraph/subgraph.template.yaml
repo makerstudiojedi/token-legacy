@@ -9,8 +9,7 @@ dataSources:
     source:
       address: '{{ LegacyFactory }}'
       abi: LegacyFactory
-      startBlock: 0
-      # startBlock: {{ startBlock }}
+      startBlock: {{ block }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

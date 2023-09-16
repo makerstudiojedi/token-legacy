@@ -1,5 +1,7 @@
 {
   "network": "localhost",
-  "LegacyFactory": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
-  "LegacyImplementation": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+  "LegacyFactory": "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",
+  "LegacyImplementation": "0x67d269191c92Caf3cD7723F116c85e6E9bf55933",
+  "block": 86,
+  "Token": "0xf5059a5D33d5853360D16C683c16e67980206f36"
 }

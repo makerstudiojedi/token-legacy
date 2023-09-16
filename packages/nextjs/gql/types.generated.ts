@@ -179,8 +179,10 @@ export enum AllocationOrderBy {
   TO__CREATEDAT = 'to__createdAt',
   TO__ID = 'to__id',
   TOKEN = 'token',
+  TOKEN__CREATEDAT = 'token__createdAt',
   TOKEN__ID = 'token__id',
   TOKEN__TOKEN = 'token__token',
+  TOKEN__TOTALALLOCATION = 'token__totalAllocation',
   UPDATEDAT = 'updatedAt',
   WITHDRAWN = 'withdrawn'
 }
@@ -228,9 +230,11 @@ export type LegacyTokensArgs = {
 export interface LegacyToken {
   __typename?: 'LegacyToken';
   allocations?: Maybe<Array<Allocation>>;
+  createdAt: Scalars['BigInt']['output'];
   id: Scalars['ID']['output'];
   legacy: Legacy;
-  token: Scalars['Bytes']['output'];
+  token: Scalars['String']['output'];
+  totalAllocation: Scalars['BigInt']['output'];
 }
 
 
@@ -247,6 +251,14 @@ export interface LegacyTokenFilter {
   _change_block?: InputMaybe<BlockChangedFilter>;
   allocations_?: InputMaybe<AllocationFilter>;
   and?: InputMaybe<Array<InputMaybe<LegacyTokenFilter>>>;
+  createdAt?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  createdAt_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_not?: InputMaybe<Scalars['BigInt']['input']>;
+  createdAt_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
   id?: InputMaybe<Scalars['ID']['input']>;
   id_gt?: InputMaybe<Scalars['ID']['input']>;
   id_gte?: InputMaybe<Scalars['ID']['input']>;
@@ -277,20 +289,39 @@ export interface LegacyTokenFilter {
   legacy_starts_with?: InputMaybe<Scalars['String']['input']>;
   legacy_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   or?: InputMaybe<Array<InputMaybe<LegacyTokenFilter>>>;
-  token?: InputMaybe<Scalars['Bytes']['input']>;
-  token_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  token_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  token_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  token_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  token_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  token_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  token_not?: InputMaybe<Scalars['Bytes']['input']>;
-  token_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  token_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  token?: InputMaybe<Scalars['String']['input']>;
+  token_contains?: InputMaybe<Scalars['String']['input']>;
+  token_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  token_ends_with?: InputMaybe<Scalars['String']['input']>;
+  token_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  token_gt?: InputMaybe<Scalars['String']['input']>;
+  token_gte?: InputMaybe<Scalars['String']['input']>;
+  token_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  token_lt?: InputMaybe<Scalars['String']['input']>;
+  token_lte?: InputMaybe<Scalars['String']['input']>;
+  token_not?: InputMaybe<Scalars['String']['input']>;
+  token_not_contains?: InputMaybe<Scalars['String']['input']>;
+  token_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  token_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  token_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  token_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  token_starts_with?: InputMaybe<Scalars['String']['input']>;
+  token_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  totalAllocation?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_gt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_gte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
+  totalAllocation_lt?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_lte?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_not?: InputMaybe<Scalars['BigInt']['input']>;
+  totalAllocation_not_in?: InputMaybe<Array<Scalars['BigInt']['input']>>;
 }
 
 export enum LegacyTokenOrderBy {
   ALLOCATIONS = 'allocations',
+  CREATEDAT = 'createdAt',
   ID = 'id',
   LEGACY = 'legacy',
   LEGACY__CREATEDAT = 'legacy__createdAt',
@@ -298,7 +329,8 @@ export enum LegacyTokenOrderBy {
   LEGACY__TRANSACTIONHASH = 'legacy__transactionHash',
   LEGACY__UNLOCKSAT = 'legacy__unlocksAt',
   LEGACY__UPDATEDAT = 'legacy__updatedAt',
-  TOKEN = 'token'
+  TOKEN = 'token',
+  TOTALALLOCATION = 'totalAllocation'
 }
 
 export interface LegacyFilter {
@@ -587,7 +619,7 @@ export type SubscriptionUsersArgs = {
 
 export interface User {
   __typename?: 'User';
-  address: Scalars['Bytes']['output'];
+  address: Scalars['String']['output'];
   allocationsFrom?: Maybe<Array<Allocation>>;
   allocationsTo?: Maybe<Array<Allocation>>;
   createdAt: Scalars['BigInt']['output'];
@@ -616,16 +648,26 @@ export type UserAllocationsToArgs = {
 export interface UserFilter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
-  address?: InputMaybe<Scalars['Bytes']['input']>;
-  address_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  address_gt?: InputMaybe<Scalars['Bytes']['input']>;
-  address_gte?: InputMaybe<Scalars['Bytes']['input']>;
-  address_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
-  address_lt?: InputMaybe<Scalars['Bytes']['input']>;
-  address_lte?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not_contains?: InputMaybe<Scalars['Bytes']['input']>;
-  address_not_in?: InputMaybe<Array<Scalars['Bytes']['input']>>;
+  address?: InputMaybe<Scalars['String']['input']>;
+  address_contains?: InputMaybe<Scalars['String']['input']>;
+  address_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  address_ends_with?: InputMaybe<Scalars['String']['input']>;
+  address_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  address_gt?: InputMaybe<Scalars['String']['input']>;
+  address_gte?: InputMaybe<Scalars['String']['input']>;
+  address_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  address_lt?: InputMaybe<Scalars['String']['input']>;
+  address_lte?: InputMaybe<Scalars['String']['input']>;
+  address_not?: InputMaybe<Scalars['String']['input']>;
+  address_not_contains?: InputMaybe<Scalars['String']['input']>;
+  address_not_contains_nocase?: InputMaybe<Scalars['String']['input']>;
+  address_not_ends_with?: InputMaybe<Scalars['String']['input']>;
+  address_not_ends_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  address_not_in?: InputMaybe<Array<Scalars['String']['input']>>;
+  address_not_starts_with?: InputMaybe<Scalars['String']['input']>;
+  address_not_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
+  address_starts_with?: InputMaybe<Scalars['String']['input']>;
+  address_starts_with_nocase?: InputMaybe<Scalars['String']['input']>;
   allocationsFrom_?: InputMaybe<AllocationFilter>;
   allocationsTo_?: InputMaybe<AllocationFilter>;
   and?: InputMaybe<Array<InputMaybe<UserFilter>>>;
@@ -732,8 +774,77 @@ export type FetchLegacyQueryResult = (
       & Pick<User, 'id'>
     ), tokens?: Maybe<Array<(
       { __typename?: 'LegacyToken' }
-      & Pick<LegacyToken, 'id' | 'token'>
+      & Pick<LegacyToken, 'id' | 'token' | 'totalAllocation'>
+      & { allocations?: Maybe<Array<(
+        { __typename?: 'Allocation' }
+        & Pick<Allocation, 'id'>
+      )>> }
     )>> }
+  )> }
+);
+
+export type MyAllocationsQueryVariables = Exact<{
+  myAddress: Scalars['String']['input'];
+  legacy: Scalars['String']['input'];
+}>;
+
+
+export type MyAllocationsQueryResult = (
+  { __typename?: 'Query' }
+  & { allocations: Array<(
+    { __typename?: 'Allocation' }
+    & Pick<Allocation, 'id' | 'percentage' | 'createdAt' | 'withdrawn'>
+    & { token: (
+      { __typename?: 'LegacyToken' }
+      & Pick<LegacyToken, 'token'>
+    ) }
+  )> }
+);
+
+export type TokenAllocationsQueryVariables = Exact<{
+  legacy: Scalars['ID']['input'];
+  token: Scalars['String']['input'];
+  beneficiary: Scalars['String']['input'];
+}>;
+
+
+export type TokenAllocationsQueryResult = (
+  { __typename?: 'Query' }
+  & { legacy?: Maybe<(
+    { __typename?: 'Legacy' }
+    & Pick<Legacy, 'unlocksAt'>
+    & { owner: (
+      { __typename?: 'User' }
+      & Pick<User, 'address'>
+    ), tokens?: Maybe<Array<(
+      { __typename?: 'LegacyToken' }
+      & Pick<LegacyToken, 'id' | 'totalAllocation'>
+      & { allocations?: Maybe<Array<(
+        { __typename?: 'Allocation' }
+        & Pick<Allocation, 'id' | 'percentage' | 'createdAt' | 'updatedAt'>
+        & { to: (
+          { __typename?: 'User' }
+          & Pick<User, 'id' | 'address'>
+        ) }
+      )>> }
+    )>> }
+  )>, allocations: Array<(
+    { __typename?: 'Allocation' }
+    & Pick<Allocation, 'id' | 'withdrawn'>
+  )> }
+);
+
+export type LatestBlockQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LatestBlockQueryResult = (
+  { __typename?: 'Query' }
+  & { _meta?: Maybe<(
+    { __typename?: '_Meta_' }
+    & { block: (
+      { __typename?: '_Block_' }
+      & Pick<Block, 'number'>
+    ) }
   )> }
 );
 
@@ -748,9 +859,13 @@ export const FetchLegacyDocument = /*#__PURE__*/ gql`
     owner {
       id
     }
-    tokens {
+    tokens(orderBy: createdAt, orderDirection: asc) {
       id
       token
+      totalAllocation
+      allocations(where: {percentage_gt: 0}) {
+        id
+      }
     }
   }
 }
@@ -782,3 +897,139 @@ export function useFetchLegacyLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
         }
 export type FetchLegacyQueryHookResult = ReturnType<typeof useFetchLegacyQuery>;
 export type FetchLegacyLazyQueryHookResult = ReturnType<typeof useFetchLegacyLazyQuery>;
+export const MyAllocationsDocument = /*#__PURE__*/ gql`
+    query myAllocations($myAddress: String!, $legacy: String!) {
+  allocations(
+    where: {to: $myAddress, legacy: $legacy, percentage_gt: 0}
+    orderBy: createdAt
+  ) {
+    id
+    percentage
+    createdAt
+    withdrawn
+    token {
+      token
+    }
+  }
+}
+    `;
+
+/**
+ * __useMyAllocationsQuery__
+ *
+ * To run a query within a React component, call `useMyAllocationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMyAllocationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMyAllocationsQuery({
+ *   variables: {
+ *      myAddress: // value for 'myAddress'
+ *      legacy: // value for 'legacy'
+ *   },
+ * });
+ */
+export function useMyAllocationsQuery(baseOptions: Apollo.QueryHookOptions<MyAllocationsQueryResult, MyAllocationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MyAllocationsQueryResult, MyAllocationsQueryVariables>(MyAllocationsDocument, options);
+      }
+export function useMyAllocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MyAllocationsQueryResult, MyAllocationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MyAllocationsQueryResult, MyAllocationsQueryVariables>(MyAllocationsDocument, options);
+        }
+export type MyAllocationsQueryHookResult = ReturnType<typeof useMyAllocationsQuery>;
+export type MyAllocationsLazyQueryHookResult = ReturnType<typeof useMyAllocationsLazyQuery>;
+export const TokenAllocationsDocument = /*#__PURE__*/ gql`
+    query tokenAllocations($legacy: ID!, $token: String!, $beneficiary: String!) {
+  legacy(id: $legacy) {
+    unlocksAt
+    owner {
+      address
+    }
+    tokens(where: {token: $token}) {
+      id
+      totalAllocation
+      allocations(where: {percentage_gt: 0}, orderBy: createdAt, orderDirection: asc) {
+        id
+        percentage
+        to {
+          id
+          address
+        }
+        createdAt
+        updatedAt
+      }
+    }
+  }
+  allocations(where: {to: $beneficiary, token_: {token: $token}}) {
+    id
+    withdrawn
+  }
+}
+    `;
+
+/**
+ * __useTokenAllocationsQuery__
+ *
+ * To run a query within a React component, call `useTokenAllocationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTokenAllocationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTokenAllocationsQuery({
+ *   variables: {
+ *      legacy: // value for 'legacy'
+ *      token: // value for 'token'
+ *      beneficiary: // value for 'beneficiary'
+ *   },
+ * });
+ */
+export function useTokenAllocationsQuery(baseOptions: Apollo.QueryHookOptions<TokenAllocationsQueryResult, TokenAllocationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TokenAllocationsQueryResult, TokenAllocationsQueryVariables>(TokenAllocationsDocument, options);
+      }
+export function useTokenAllocationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenAllocationsQueryResult, TokenAllocationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TokenAllocationsQueryResult, TokenAllocationsQueryVariables>(TokenAllocationsDocument, options);
+        }
+export type TokenAllocationsQueryHookResult = ReturnType<typeof useTokenAllocationsQuery>;
+export type TokenAllocationsLazyQueryHookResult = ReturnType<typeof useTokenAllocationsLazyQuery>;
+export const LatestBlockDocument = /*#__PURE__*/ gql`
+    query latestBlock {
+  _meta {
+    block {
+      number
+    }
+  }
+}
+    `;
+
+/**
+ * __useLatestBlockQuery__
+ *
+ * To run a query within a React component, call `useLatestBlockQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLatestBlockQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLatestBlockQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLatestBlockQuery(baseOptions?: Apollo.QueryHookOptions<LatestBlockQueryResult, LatestBlockQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LatestBlockQueryResult, LatestBlockQueryVariables>(LatestBlockDocument, options);
+      }
+export function useLatestBlockLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LatestBlockQueryResult, LatestBlockQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LatestBlockQueryResult, LatestBlockQueryVariables>(LatestBlockDocument, options);
+        }
+export type LatestBlockQueryHookResult = ReturnType<typeof useLatestBlockQuery>;
+export type LatestBlockLazyQueryHookResult = ReturnType<typeof useLatestBlockLazyQuery>;

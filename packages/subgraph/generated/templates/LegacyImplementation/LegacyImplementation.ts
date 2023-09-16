@@ -118,6 +118,29 @@ export class LegacyImplementation extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
+  getTokenBalance(token: Address): BigInt {
+    let result = super.call(
+      "getTokenBalance",
+      "getTokenBalance(address):(uint256)",
+      [ethereum.Value.fromAddress(token)]
+    );
+
+    return result[0].toBigInt();
+  }
+
+  try_getTokenBalance(token: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "getTokenBalance",
+      "getTokenBalance(address):(uint256)",
+      [ethereum.Value.fromAddress(token)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
+  }
+
   getTotalAllocation(token: Address): BigInt {
     let result = super.call(
       "getTotalAllocation",
@@ -154,6 +177,27 @@ export class LegacyImplementation extends ethereum.SmartContract {
     }
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toAddress());
+  }
+
+  tokenBalance(param0: Address): BigInt {
+    let result = super.call("tokenBalance", "tokenBalance(address):(uint256)", [
+      ethereum.Value.fromAddress(param0)
+    ]);
+
+    return result[0].toBigInt();
+  }
+
+  try_tokenBalance(param0: Address): ethereum.CallResult<BigInt> {
+    let result = super.tryCall(
+      "tokenBalance",
+      "tokenBalance(address):(uint256)",
+      [ethereum.Value.fromAddress(param0)]
+    );
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
   totalAllocations(param0: Address): BigInt {

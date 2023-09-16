@@ -1,3 +1,4 @@
+import { isAddress } from "viem";
 import { BlockieAvatar } from "../scaffold-eth";
 import { shortenAddress } from "~~/utils/helpers";
 
@@ -7,6 +8,7 @@ interface AddressBadgeProps {
 }
 
 const AddressBadge = ({ address, onClick }: AddressBadgeProps) => {
+  const _isAddress = isAddress(address);
   return (
     <div
       className="inline-flex items-center gap-2 px-4 py-2 rounded-3xl border border-[#1E4069] cursor-pointer hover:opacity-70 transition"
@@ -16,7 +18,7 @@ const AddressBadge = ({ address, onClick }: AddressBadgeProps) => {
         <BlockieAvatar address={address} size={200} className="object-cover w-full h-full blockie-avatar" />
       </span>
 
-      <h1 className="text-lg font-bold">{shortenAddress(address)}</h1>
+      <h1 className="text-lg font-bold">{_isAddress ? shortenAddress(address) : address}</h1>
     </div>
   );
 };

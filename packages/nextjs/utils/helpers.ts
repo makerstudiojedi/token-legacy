@@ -89,3 +89,15 @@ export const legacyUnlockDateCheck = (unlocksAt: number): legacyUnlockDateCheckS
     return legacyUnlockDateCheckStatus.DateNotClose;
   }
 };
+
+export const abbreviateNumber = (value: number): string => {
+  let newValue = value;
+  const suffixes = ["", "K", "M", "B", "T"];
+  let suffixNum = 0;
+  while (newValue >= 1000) {
+    newValue /= 1000;
+    suffixNum++;
+  }
+
+  return (newValue.toString().length > 2 ? newValue.toPrecision(3) : newValue.toPrecision()) + suffixes[suffixNum];
+}

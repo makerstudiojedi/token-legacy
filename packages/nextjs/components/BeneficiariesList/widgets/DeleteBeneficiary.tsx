@@ -2,23 +2,37 @@ import { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import Beneficiary from "../Beneficiary";
+import { AllocationType } from "../Beneficiary.types";
+import { FetchTokenResult } from "wagmi/dist/actions";
 import Icon from "~~/components/Icons";
 import { Button } from "~~/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 
 interface DeleteBeneficiaryProps {
   open: boolean;
+  balance: number;
+  tokenData: FetchTokenResult;
+  allocation: AllocationType;
+  onConfirm: () => Promise<void>;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
 }
 
-const DeleteBeneficiary: React.FC<DeleteBeneficiaryProps> = ({ open, onOpenChange }): JSX.Element => {
+const DeleteBeneficiary: React.FC<DeleteBeneficiaryProps> = ({
+  open,
+  balance,
+  allocation,
+  tokenData,
+  onOpenChange,
+  onConfirm,
+}): JSX.Element => {
   const handleDialogOpenChange = (open: boolean) => {
     // if (isLoading) return null
 
     onOpenChange(open);
   };
 
-  const onDeleteHandler = () => {
+  const onDeleteHandler = async () => {
+    await onConfirm();
     onOpenChange(false);
   };
 
@@ -58,7 +72,14 @@ const DeleteBeneficiary: React.FC<DeleteBeneficiaryProps> = ({ open, onOpenChang
         </div>
 
         <div className="mt-2">
-          <Beneficiary className="bg-backgroundDarker p-4 rounded-2xl" isReadOnly={true} />
+          <Beneficiary
+            className="bg-backgroundDarker p-4 rounded-2xl"
+            isReadOnly={true}
+            balance={balance}
+            tokenData={tokenData}
+            allocation={allocation}
+            onSave={async () => undefined}
+          />
         </div>
 
         <DialogFooter className="mt-5">

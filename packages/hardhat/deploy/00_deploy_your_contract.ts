@@ -49,7 +49,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   console.log(`Setting Implementation Addresss to ${LegacyImplementation.address}`);
 
-  LegacyFactory.setImplementationAddress(LegacyImplementation.address);
+  await LegacyFactory.setImplementationAddress(LegacyImplementation.address);
 
   console.log(`LegacyImplementation set`);
 
