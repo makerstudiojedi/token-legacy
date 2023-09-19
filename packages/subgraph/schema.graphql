@@ -1,6 +1,6 @@
 type User @entity {
   id: ID!
-  address: Bytes!
+  address: String!
   createdAt: BigInt!
   legacy: Legacy
   allocationsFrom: [Allocation!] @derivedFrom(field: "from")
@@ -20,9 +20,11 @@ type Legacy @entity {
 
 type LegacyToken @entity {
   id: ID!
-  token: Bytes!
+  token: String!
   legacy: Legacy!
+  totalAllocation: BigInt!
   allocations: [Allocation!] @derivedFrom(field: "token")
+  createdAt: BigInt!
 }
 
 type Allocation @entity {

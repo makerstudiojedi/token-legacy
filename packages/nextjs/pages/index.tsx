@@ -19,10 +19,12 @@ import { Button } from "~~/components/ui/button";
 import { useFetchLegacyQuery } from "~~/gql/types.generated";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { cn } from "~~/lib/utils";
+import { useGraphStore } from "~~/services/store/graphstore";
 import { legacyUnlockDateCheck, legacyUnlockDateCheckStatus, shortenAddress } from "~~/utils/helpers";
 
 const HomePage: NextPage = (): JSX.Element => {
   const { address } = useAccount();
+  const [setLatestActionBlock] = useGraphStore(state => [state.setLatestActionBlock]);
 
   const isWalletConnected = isAddress(address as string);
 
@@ -33,6 +35,9 @@ const HomePage: NextPage = (): JSX.Element => {
     contractName: "LegacyFactory",
     functionName: "createLegacy",
     value: "0",
+    onBlockConfirmation: async txReceipt => {
+      setLatestActionBlock(Number(txReceipt.blockNumber));
+    },
   });
 
   // read legacyAddress from contract
@@ -105,7 +110,7 @@ const HomePage: NextPage = (): JSX.Element => {
                     </Button>
                   )}
 
-                  <div className="mt-6">
+                  {/* <div className="mt-6">
                     <div className="flex items-center justify-between gap-2">
                       <div className="h-px flex-grow bg-[#3F5876]"></div>
                       <p className="text-sm font-semibold">You are a beneficiary to</p>
@@ -117,7 +122,7 @@ const HomePage: NextPage = (): JSX.Element => {
                       <BeneficiaryCard address={address ?? ""} />
                       <BeneficiaryCard address={address ?? ""} />
                     </div>
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
@@ -228,7 +233,7 @@ export const BenefactorCard = ({ legacyAddress }: { legacyAddress: string }) => 
               className={
                 "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition bg-red-700/30"
               }
-              onClick={() => router.push("/legacy/release-date")}
+              onClick={() => router.push(`/legacy/${legacyAddress}/release-date`)}
             >
               <Icon className="flex-shrink-0 [&_path]:fill-red-400" title="stop-watch" width={16} height={16} />
             </span>
@@ -240,7 +245,7 @@ export const BenefactorCard = ({ legacyAddress }: { legacyAddress: string }) => 
                 "w-7 h-7 rounded-full flex items-center justify-center cursor-pointer hover:opacity-70 transition",
                 isWithdrawalDateClose ? "bg-[#45350D]" : "bg-backgroundDark",
               )}
-              onClick={() => router.push("/legacy/release-date")}
+              onClick={() => router.push(`/legacy/${legacyAddress}/release-date`)}
             >
               {isWithdrawalDateClose ? (
                 <Icon className="flex-shrink-0" title="stop-watch-warning" width={16} height={16} />

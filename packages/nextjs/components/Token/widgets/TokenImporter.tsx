@@ -1,36 +1,40 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import LoadAddress from "./LoadAddress";
 import { isAddress } from "viem";
-import { FetchTokenResult } from "wagmi/dist/actions";
+import { useToken } from "wagmi";
 import Icon from "~~/components/Icons";
 import { Loader } from "~~/components/Loader";
 import { AddressInput } from "~~/components/scaffold-eth";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~~/components/ui/dialog";
 import { cn } from "~~/lib/utils";
+import { TokenContext } from "~~/providers/TokenProvider";
 
-interface AddressEditorDialogProps {
+interface TokenImporterProps {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
-  onSave?: (address: `0x${string}`, amount?: number) => Promise<any>;
-  tokenData: FetchTokenResult | undefined;
-  leftOver: number;
+  onSave?: () => void;
   allotShare?: boolean;
 }
 
-const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
-  open,
-  onOpenChange,
-  onSave,
-  tokenData,
-  leftOver,
-  allotShare = true,
-}): JSX.Element => {
+const TokenImporter: React.FC<TokenImporterProps> = ({ open, onOpenChange, onSave }): JSX.Element => {
+  const { setTokenAddress } = useContext(TokenContext);
   const [address, setAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(false);
+
+  const { data } = useToken({
+    address: address as `0x${string}`,
+    enabled: isAddress(address as `0x${string}`),
+  });
+
+  useEffect(() => {
+    if (data?.address) {
+      setTokenAddress(data.address as `0x${string}`);
+      setAddress("");
+    }
+  }, [data?.address, setTokenAddress]);
 
   const handleDialogOpenChange = (open: boolean) => {
     if (isLoading) return null;
@@ -54,21 +58,12 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
     setIsLoading(false);
   };
 
-  const onSaveHandler = async (amount?: number) => {
-    if (onSave) {
-      await onSave(address as `0x${string}`, amount || 0);
-    }
+  const onSaveHandler = () => {
+    if (onSave) onSave();
 
     setIsAddressLoaded(false);
     onOpenChange(false);
     setAddress("");
-  };
-
-  const handleInputChange = (_address: string) => {
-    setAddress(_address);
-    if (isAddress(_address)) {
-      setIsAddressLoaded(true);
-    }
   };
 
   return (
@@ -80,7 +75,7 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
               <div className="flex items-center justify-center gap-2">
                 <Icon title="beneficiaries-blue" />
 
-                <h4 className="text-white font-semibold font-grotesque -mt-1">Beneficiary</h4>
+                <h4 className="text-white font-semibold font-grotesque -mt-1">Import Token</h4>
               </div>
             </DialogTitle>
           </DialogHeader>
@@ -93,17 +88,17 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
             <Icon title="user" />
           </div>
 
-          <h5 className="text-center">Enter beneficiary wallet address to continue</h5>
+          <h5 className="text-center">Enter token address</h5>
 
           <DialogFooter className="overflow-hidden">
             <div className="flex items-center justify-between w-full rounded-[10px] bg-backgroundDarker p-4 gap-3">
-              {/* <Icon title="wallet-blue" /> */}
+              <Icon title="wallet-blue" />
 
               <AddressInput
                 name="address"
                 value={address}
-                onChange={handleInputChange}
-                placeholder="Beneficiary Address or ENS name"
+                onChange={_address => setAddress(_address)}
+                placeholder="Token Address or ENS name"
               />
 
               <span
@@ -113,7 +108,7 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
                 )}
                 onClick={pasteAddressHandler}
               >
-                {!isLoading ? (
+                {!isLoading && address.length === 0 && !isAddress(address) ? (
                   <>
                     <Icon title="magic-wand" />
 
@@ -128,24 +123,19 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
         </DialogContent>
       </Dialog>
 
-      {tokenData && (
-        <LoadAddress
-          address={address as `0x${string}`}
-          open={isAddressLoaded}
-          onOpenChange={setIsAddressLoaded}
-          onSave={onSaveHandler}
-          allotShare={allotShare}
-          onClose={() => {
-            onOpenChange(false);
-            setAddress("");
-          }}
-          tokenShare={0}
-          tokenData={tokenData}
-          remainingShare={leftOver}
-        />
-      )}
+      {/* <LoadAddress
+        open={isAddressLoaded}
+        onOpenChange={setIsAddressLoaded}
+        onSave={onSaveHandler}
+        onClose={() => {
+          onOpenChange(false);
+          setAddress("");
+        }}
+        tokenShare={25}
+        remainingShare={50}
+      /> */}
     </>
   );
 };
 
-export default AddressEditorDialog;
+export default TokenImporter;

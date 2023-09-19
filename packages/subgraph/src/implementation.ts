@@ -1,6 +1,7 @@
 import { log } from "@graphprotocol/graph-ts";
 import { User, Legacy, LegacyToken, Allocation } from '../generated/schema';
 import { WillAdded, WillWithdrawn, ProofUpdated } from '../generated/Legacy/LegacyImplementation';
+import { LegacyImplementation as LegacyImplementationContract } from '../generated/templates/LegacyImplementation/LegacyImplementation';
 
 function createUID(list: string[]): string {
   return list.join("-");
@@ -30,18 +31,21 @@ export function handleWillAdded(event: WillAdded): void {
     return;
   }
 
+  const legacyContract = LegacyImplementationContract.bind(legacyAddress);
+
   const allocationId = createUID([legacyAddress.toHexString(), tokenAddress.toHexString(), beneficiaryAddress.toHexString()]);
   let allocation = Allocation.load(allocationId);
 
   if (token === null) {
     token = new LegacyToken(tokenId);
-    token.token = tokenAddress;
+    token.token = tokenAddress.toHexString();
     token.legacy = legacy.id;
+    token.createdAt = event.block.timestamp;
   }
 
   if (beneficiary === null) {
     beneficiary = new User(beneficiaryAddress.toHexString());
-    beneficiary.address = beneficiaryAddress;
+    beneficiary.address = beneficiaryAddress.toHexString();
     beneficiary.createdAt = event.block.timestamp;
   }
 
@@ -59,6 +63,7 @@ export function handleWillAdded(event: WillAdded): void {
 
   allocation.withdrawn = false;
   allocation.updatedAt = event.block.timestamp;
+  token.totalAllocation = legacyContract.getTotalAllocation(tokenAddress);
 
   beneficiary.save();
   legacy.save();

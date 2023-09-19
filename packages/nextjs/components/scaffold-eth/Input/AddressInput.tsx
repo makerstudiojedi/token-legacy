@@ -21,7 +21,7 @@ export const AddressInput = ({ value, name, placeholder, onChange }: CommonInput
 
   const [enteredEnsName, setEnteredEnsName] = useState<string>();
   const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
-    address: value,
+    address: value as `0x${string}`,
     enabled: isAddress(value),
     chainId: 1,
     cacheTime: 30_000,
@@ -56,14 +56,14 @@ export const AddressInput = ({ value, name, placeholder, onChange }: CommonInput
       name={name}
       placeholder={placeholder}
       error={ensAddress === null}
-      value={value}
+      value={value as `0x${string}`}
       onChange={handleChange}
       disabled={isEnsAddressLoading || isEnsNameLoading}
-      prefix={
+      suffix={
         ensName && (
           <div className="flex bg-base-300 rounded-l-full items-center">
             {ensAvatar ? (
-              <span className="w-[35px]">
+              <span className="w-[20px]">
                 {
                   // eslint-disable-next-line
                   <img className="w-full rounded-full" src={ensAvatar} alt={`${ensAddress} avatar`} />
@@ -74,7 +74,7 @@ export const AddressInput = ({ value, name, placeholder, onChange }: CommonInput
           </div>
         )
       }
-      suffix={value && <Blockies className="!rounded-full" seed={value?.toLowerCase() as string} size={7} scale={5} />}
+      prefix={value && <Blockies seed={value?.toLowerCase() as string} size={5} scale={5} />}
     />
   );
 };

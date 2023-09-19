@@ -3,6 +3,9 @@ import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import avatar from "../../../public/avatar1.svg";
 import DeleteBeneficiary from "./DeleteBeneficiary";
+import { isAddress } from "viem";
+import { useEnsName } from "wagmi";
+import { FetchTokenResult } from "wagmi/dist/actions";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import { EditableField } from "~~/components/EditableField";
 import Icon from "~~/components/Icons";
@@ -12,25 +15,41 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Slider } from "~~/components/ui/slider";
 import { cn } from "~~/lib/utils";
 import { shortenAddress } from "~~/utils/helpers";
+import { AllocationType } from "../Beneficiary.types";
 
 interface BeneficiaryDetailsProps {
   open: boolean;
+  balance: number;
+  onSave: (_address: `0x${string}`, amount?: number) => Promise<void>;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
+  address: `0x${string}`;
+  tokenData: FetchTokenResult;
+  allocation: AllocationType;
   tokenShare: number;
   remainingShare: number;
 }
 
 const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
   open,
+  onSave,
+  balance,
   onOpenChange,
+  address,
+  tokenData,
   tokenShare,
+  allocation,
   remainingShare,
 }): JSX.Element => {
   const [isAddressEditorDialogOpen, setIsAddressEditorDialogOpen] = useState<boolean>(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [allotedShare, setAllotedShare] = useState<number>(tokenShare);
-  const address = "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa";
+
+  const { data: ensName } = useEnsName({
+    address,
+    enabled: isAddress(address),
+    chainId: 1,
+  });
 
   const dialogChangeHandler = (open: boolean) => {
     if (open === false) {
@@ -40,12 +59,14 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
     onOpenChange(open);
   };
 
-  const onAddressEditorSaveHandler = () => {
+  const onAddressEditorSaveHandler = async () => {
     setIsAddressEditorDialogOpen(false);
     setIsEditing(false);
   };
 
-  const onEditSaveHandler = () => {
+  const onEditSaveHandler = async (_address: `0x${string}`, amount?: number) => {
+    // TODO : Handle tx for user
+    await onSave(_address, amount === undefined ? allotedShare : amount);
     onOpenChange(false);
     setIsEditing(false);
   };
@@ -84,8 +105,8 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
           </div>
 
           <div className="flex items-center justify-center gap-2">
-            <h3 className="font-bold">emu.eth</h3>
-            <AddToClipboard text="emu.eth" copiedText="ENS copied">
+            <h3 className="font-bold">{ensName ?? "- -"}</h3>
+            <AddToClipboard text={address} copiedText="ENS copied">
               <Icon title="copy-purple" />
             </AddToClipboard>
           </div>
@@ -93,13 +114,13 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
           <div className="flex items-center justify-center gap-2">
             <h5 className="text-[#7DA1CC]">{shortenAddress(address)}</h5>
 
-            {isEditing && (
+            {/* {isEditing && (
               <Icon
                 className="cursor-pointer hover:opacity-70 transition"
                 title="edit"
                 onClick={() => setIsAddressEditorDialogOpen(true)}
               />
-            )}
+            )} */}
           </div>
 
           <div className="relative">
@@ -112,7 +133,11 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
           <div className="mt-2">
             <div className={cn("rounded-[10px] bg-backgroundDarker", isEditing ? "px-3 pt-3 pb-6" : "p-3")}>
               {isEditing ? (
-                <EditableField onValueChange={setAllotedShare} value={allotedShare} max={remainingShare} />
+                <EditableField
+                  onValueChange={setAllotedShare}
+                  value={allotedShare}
+                  max={remainingShare + Number(tokenShare)}
+                />
               ) : (
                 <div className="flex items-center justify-center py-5 rounded bg-backgroundDark">
                   <h3 className="font-bold">{allotedShare}%</h3>
@@ -124,7 +149,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
                   className="mt-5"
                   value={[allotedShare]}
                   onValueChange={value => setAllotedShare(value[0])}
-                  max={remainingShare}
+                  max={remainingShare + Number(tokenShare)}
                   step={1}
                 />
               )}
@@ -133,13 +158,15 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
             <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
               <Icon title="star" />
 
-              <h6>You have {remainingShare - allotedShare}% USDC left to allocate</h6>
+              <h6>
+                You have {remainingShare + Number(tokenShare) - allotedShare}% {tokenData?.symbol} combined to allocate
+              </h6>
             </div>
           </div>
 
           <DialogFooter className="overflow-hidden mt-5">
             {isEditing ? (
-              <Button className="w-full" onClick={onEditSaveHandler}>
+              <Button className="w-full" onClick={async () => await onEditSaveHandler(address)}>
                 Save
               </Button>
             ) : (
@@ -164,9 +191,18 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
         open={isAddressEditorDialogOpen}
         onOpenChange={setIsAddressEditorDialogOpen}
         onSave={onAddressEditorSaveHandler}
+        tokenData={tokenData}
+        leftOver={remainingShare}
       />
 
-      <DeleteBeneficiary open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen} />
+      <DeleteBeneficiary
+        tokenData={tokenData}
+        allocation={allocation}
+        open={isDeleteDialogOpen}
+        balance={balance}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={() => onEditSaveHandler(address, 0)}
+      />
     </>
   );
 };

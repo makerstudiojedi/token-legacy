@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AddressBadge } from "../AddressBadge";
 import Icon from "../Icons";
@@ -5,13 +6,22 @@ import Logo from "../Logo/Logo";
 import { Button } from "../ui/button";
 import styles from "./Navbar.module.scss";
 import { useAccountModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
+import { useAccount, useEnsName } from "wagmi";
+import { TokenContext } from "~~/providers/TokenProvider";
 
 const Navbar: React.FC = (): JSX.Element => {
   const router = useRouter();
+  const { toggleTokenImporter } = useContext(TokenContext);
 
   const { address } = useAccount();
   const { openAccountModal } = useAccountModal();
+
+  const { data: ensName } = useEnsName({
+    address: address as `0x${string}`,
+    chainId: 1,
+  });
+
+  console.log({ ensName });
 
   const pathname = usePathname() ?? "";
 
@@ -20,15 +30,15 @@ const Navbar: React.FC = (): JSX.Element => {
   return (
     <header className={styles.Navbar}>
       <nav>
-        <Logo className="cursor-pointer hover:opacity-70 transition" onClick={() => router.push("/wallet")} />
+        <Logo className="cursor-pointer hover:opacity-70 transition" onClick={() => router.push("/")} />
 
         <ul>
           <li>
             {!isBeneficiaryPage ? (
-              <Button>
+              <Button onClick={() => toggleTokenImporter(true)}>
                 <Icon title="import" />
 
-                <span>Import tokens</span>
+                <span>Import token</span>
               </Button>
             ) : (
               <Button>
@@ -40,13 +50,13 @@ const Navbar: React.FC = (): JSX.Element => {
           </li>
 
           <li>
-            <Button size={"icon"} variant={"icon"} onClick={() => router.push("/wallet/release-date")}>
+            <Button size={"icon"} variant={"icon"} onClick={() => router.push("/legacy/release-date")}>
               <Icon title="stop-watch" />
             </Button>
           </li>
 
           <li>
-            <AddressBadge address={address ?? ""} onClick={openAccountModal} />
+            <AddressBadge address={(ensName || address) ?? ""} onClick={openAccountModal} />
           </li>
         </ul>
       </nav>
