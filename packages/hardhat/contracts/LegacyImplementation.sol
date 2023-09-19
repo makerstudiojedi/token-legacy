@@ -9,7 +9,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 contract LegacyImplementation is Initializable, ReentrancyGuard {
 	address public owner;
 	uint256 public deadline;
-	uint256 public decimal = 100;
+	// uint256 public constant decimal = 100;
 
 	mapping(bytes32 => uint256) public wills;
 	mapping(address => uint256) public totalAllocations;
@@ -46,7 +46,8 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 		uint256 percentage
 	) public onlyOwner {
 		require(to != address(0), "Can't transfer to zero address");
-		require(percentage >= 0 && percentage <= decimal, "Invalid percentage");
+		require(percentage >= 0, "Percentage too low");
+		require(percentage <= 100, "Percentage too high");
 
 		address tokenAddress = address(token);
 		bytes32 willKey = keccak256(abi.encode(to, tokenAddress));
@@ -65,7 +66,7 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 		newAllocation -= currentWill;
 
 		require(
-			newAllocation >= 0 && newAllocation <= decimal,
+			newAllocation >= 0 && newAllocation <= 100,
 			"Allocatable amount exceeded"
 		);
 
@@ -96,7 +97,7 @@ contract LegacyImplementation is Initializable, ReentrancyGuard {
 
 		tokenBalance[address(token)] = _balance;
 
-		uint256 allocationAmount = (_balance * myPercentage) / decimal;
+		uint256 allocationAmount = (_balance * myPercentage) / 100;
 
 		bool success = token.transferFrom(owner, msg.sender, allocationAmount);
 
