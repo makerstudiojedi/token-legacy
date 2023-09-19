@@ -21,8 +21,6 @@ const Navbar: React.FC = (): JSX.Element => {
     chainId: 1,
   });
 
-  console.log({ ensName });
-
   const pathname = usePathname() ?? "";
 
   const isBeneficiaryPage = pathname.startsWith("/beneficiary");
