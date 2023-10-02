@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Blockies from "react-blockies";
-import { isAddress } from "viem";
-import { Address } from "viem";
+import { Address, isAddress } from "viem";
 import { useEnsAddress, useEnsAvatar, useEnsName } from "wagmi";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-eth";
-
-// ToDo:  move this function to an utility file
-const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".xyz");
+import { isENS } from "~~/utils/helpers";
 
 /**
  * Address input with ENS name resolution

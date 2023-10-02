@@ -10,7 +10,7 @@ You need 4 Terminal windows:
 yarn start
 ```
 
-Open `http://localhost:3000`, connect your burner wallet, copy address and edit `packages/deploy/01_deploy_tokens.ts`. Set `testerAddress` to your burner wallet address
+Open `http://localhost:3000`, connect your burner wallet, copy address and edit `packages/hardhat/deploy/01_deploy_tokens.ts`. Set `testerAddress` to your burner wallet address
 
 - Terminal 2:
 

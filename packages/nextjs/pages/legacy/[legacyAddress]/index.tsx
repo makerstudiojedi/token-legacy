@@ -6,7 +6,6 @@ import { useAccount, useEnsName } from "wagmi";
 import { AddToClipboard } from "~~/components/AddToClipboard";
 import Icon from "~~/components/Icons";
 import WalletLayout from "~~/components/Layout";
-import { NFTCard } from "~~/components/NFTCard";
 import { Token, TokenAllocation } from "~~/components/Token";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useFetchLegacyQuery, useMyAllocationsQuery } from "~~/gql/types.generated";
@@ -56,7 +55,7 @@ const LegacyPage: NextPage = (): JSX.Element => {
   const ownerDisplay = ownerEns || shortenAddress(ownerAddress);
 
   return (
-    <WalletLayout>
+    <WalletLayout unlocksAt={unlocksAt}>
       <div className="-mt-14 z-20 relative">
         <div className="">
           <div className="w-28 h-28 rounded-full mx-auto border-[4px] border-[#1B4A76]">
@@ -97,23 +96,30 @@ const LegacyPage: NextPage = (): JSX.Element => {
           <div className="max-w-[400px] mx-auto mt-12">
             {isLegacyOwner && (
               <>
-                <div className="flex items-center gap-4 px-1">
-                  <div className="h-px bg-[#3F5876] flex-grow"></div>
-                  <p className="font-medium">Your Tokens</p>
-                  <div className="h-px bg-[#3F5876] flex-grow"></div>
-                </div>
-                <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
-                  <div className="space-y-3">
-                    {tokenList?.map(tokenItem => (
-                      <Token
-                        token={tokenItem}
-                        key={tokenItem.id}
-                        owner={ownerAddress}
-                        legacy={legacyAddress as `0x${string}`}
-                      />
-                    ))}
-                  </div>
-                </div>
+                {tokenList?.length === 0 && <div className="text-center pt-8">No tokens imported yet.</div>}
+
+                {tokenList?.length !== 0 && (
+                  <>
+                    <div className="flex items-center gap-4 px-1">
+                      <div className="h-px bg-[#3F5876] flex-grow"></div>
+                      <p className="font-medium">Your Tokens</p>
+                      <div className="h-px bg-[#3F5876] flex-grow"></div>
+                    </div>
+
+                    <div className="bg-[#0B1827] rounded-2xl p-4 mt-5">
+                      <div className="space-y-3">
+                        {tokenList?.map(tokenItem => (
+                          <Token
+                            token={tokenItem}
+                            key={tokenItem.id}
+                            owner={ownerAddress}
+                            legacy={legacyAddress as `0x${string}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
 

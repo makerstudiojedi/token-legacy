@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import avatar from "../../../public/avatar1.svg";
+import { AllocationType } from "../Beneficiary.types";
 import DeleteBeneficiary from "./DeleteBeneficiary";
 import { isAddress } from "viem";
 import { useEnsName } from "wagmi";
@@ -15,7 +16,6 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { Slider } from "~~/components/ui/slider";
 import { cn } from "~~/lib/utils";
 import { shortenAddress } from "~~/utils/helpers";
-import { AllocationType } from "../Beneficiary.types";
 
 interface BeneficiaryDetailsProps {
   open: boolean;
@@ -45,6 +45,8 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [allotedShare, setAllotedShare] = useState<number>(tokenShare);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { data: ensName } = useEnsName({
     address,
     enabled: isAddress(address),
@@ -52,6 +54,8 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
   });
 
   const dialogChangeHandler = (open: boolean) => {
+    if (isLoading) return null;
+
     if (open === false) {
       setIsEditing(false);
     }
@@ -66,9 +70,13 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
 
   const onEditSaveHandler = async (_address: `0x${string}`, amount?: number) => {
     // TODO : Handle tx for user
+    setIsLoading(true);
     await onSave(_address, amount === undefined ? allotedShare : amount);
+    await new Promise(resolve => setTimeout(resolve, 4000));
+
     onOpenChange(false);
     setIsEditing(false);
+    setIsLoading(false);
   };
 
   return (
@@ -144,7 +152,7 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
                 </div>
               )}
 
-              {isEditing && (
+              {isEditing && !isLoading && (
                 <Slider
                   className="mt-5"
                   value={[allotedShare]}
@@ -155,18 +163,21 @@ const BeneficiaryDetails: React.FC<BeneficiaryDetailsProps> = ({
               )}
             </div>
 
-            <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
-              <Icon title="star" />
+            {!isLoading && (
+              <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
+                <Icon title="star" />
 
-              <h6>
-                You have {remainingShare + Number(tokenShare) - allotedShare}% {tokenData?.symbol} combined to allocate
-              </h6>
-            </div>
+                <h6>
+                  You have {remainingShare + Number(tokenShare) - allotedShare}% {tokenData?.symbol} combined to
+                  allocate
+                </h6>
+              </div>
+            )}
           </div>
 
           <DialogFooter className="overflow-hidden mt-5">
             {isEditing ? (
-              <Button className="w-full" onClick={async () => await onEditSaveHandler(address)}>
+              <Button className="w-full" loading={isLoading} onClick={async () => await onEditSaveHandler(address)}>
                 Save
               </Button>
             ) : (

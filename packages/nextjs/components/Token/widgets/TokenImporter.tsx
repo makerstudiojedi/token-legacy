@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
-import LoadAddress from "./LoadAddress";
 import { isAddress } from "viem";
 import { useToken } from "wagmi";
 import Icon from "~~/components/Icons";
@@ -18,11 +17,10 @@ interface TokenImporterProps {
   allotShare?: boolean;
 }
 
-const TokenImporter: React.FC<TokenImporterProps> = ({ open, onOpenChange, onSave }): JSX.Element => {
+const TokenImporter: React.FC<TokenImporterProps> = ({ open, onOpenChange }): JSX.Element => {
   const { setTokenAddress } = useContext(TokenContext);
   const [address, setAddress] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isAddressLoaded, setIsAddressLoaded] = useState<boolean>(false);
 
   const { data } = useToken({
     address: address as `0x${string}`,
@@ -47,23 +45,11 @@ const TokenImporter: React.FC<TokenImporterProps> = ({ open, onOpenChange, onSav
     try {
       const text = await navigator.clipboard.readText();
       setAddress(text);
-      setIsLoading(true);
-
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      setIsAddressLoaded(true);
     } catch (error) {
       console.error("Failed to read text from clipboard:", error);
     }
 
     setIsLoading(false);
-  };
-
-  const onSaveHandler = () => {
-    if (onSave) onSave();
-
-    setIsAddressLoaded(false);
-    onOpenChange(false);
-    setAddress("");
   };
 
   return (

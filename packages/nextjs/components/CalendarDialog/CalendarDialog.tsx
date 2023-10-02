@@ -1,16 +1,21 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Calendar } from "../ui/calendar";
-import styles from "./CalendarDialog.module.scss";
-import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "~~/components/ui/dialog";
 
 interface CalendarDialogProps {
   currentDate: Date | undefined;
   onApplyDate: (value: Date | undefined) => void;
+  children: React.ReactNode;
+  isLoading: boolean;
 }
 
-const CalendarDialog: React.FC<CalendarDialogProps> = ({ currentDate, onApplyDate }): JSX.Element => {
+const CalendarDialog: React.FC<CalendarDialogProps> = ({
+  currentDate,
+  onApplyDate,
+  children,
+  isLoading,
+}): JSX.Element => {
   const [date, setDate] = useState<Date | undefined>(currentDate);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [allowApply, setAllowApply] = useState<boolean>(true);
@@ -25,24 +30,10 @@ const CalendarDialog: React.FC<CalendarDialogProps> = ({ currentDate, onApplyDat
     setIsDialogOpen(false);
   };
 
-  const dateInText = useMemo(() => {
-    if (!date) return "";
-
-    return format(date, "dd/MM/yyyy");
-  }, [date]);
-
   return (
     <>
       <Dialog open={isDialogOpen} onOpenChange={open => handleDialogOpenChange(open)}>
-        <DialogTrigger>
-          <div className={styles.CalendarDialog}>
-            {date ? (
-              <h1 className="font-semibold font-grotesque">{dateInText}</h1>
-            ) : (
-              <h1 className="font-semibold font-grotesque">dd/mm/yyyy</h1>
-            )}
-          </div>
-        </DialogTrigger>
+        <DialogTrigger>{children}</DialogTrigger>
 
         <DialogContent className="sm:max-w-[350px] gap-6 select-none">
           <DialogHeader></DialogHeader>
@@ -60,7 +51,11 @@ const CalendarDialog: React.FC<CalendarDialogProps> = ({ currentDate, onApplyDat
             />
           </div>
 
-          {allowApply && <Button onClick={handleApplyDate}>Apply date</Button>}
+          {allowApply && (
+            <Button onClick={handleApplyDate} loading={isLoading}>
+              Apply date
+            </Button>
+          )}
         </DialogContent>
       </Dialog>
     </>

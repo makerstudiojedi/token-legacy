@@ -3,8 +3,14 @@ import tokensBg from "../public/tokens-bg.svg";
 import Icon from "./Icons";
 import IsMountedWrapper from "./IsMountedWrapper";
 import { Navbar } from "./Navbar";
+import { formatDistance } from "date-fns";
 
-export default function WalletLayout({ children }: { children: React.ReactNode }) {
+interface WalletLayoutProps {
+  children: React.ReactNode;
+  unlocksAt: number;
+}
+
+export default function WalletLayout({ children, unlocksAt }: WalletLayoutProps) {
   return (
     <IsMountedWrapper>
       <div className="min-h-screen flex flex-col pb-16">
@@ -21,8 +27,7 @@ export default function WalletLayout({ children }: { children: React.ReactNode }
         <footer className="flex-shrink-0 flex items-center justify-center">
           <span className="flex items-center gap-2">
             <Icon title="calendar" className="[&_path]:fill-[#3F5876]" />
-
-            <p className="text-[#3F5876]">73000 days to release</p>
+            <p className="text-[#3F5876]">{formatDistance(new Date(unlocksAt), Date.now())} to release</p>
           </span>
         </footer>
       </div>

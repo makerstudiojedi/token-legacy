@@ -24,7 +24,7 @@ import { legacyUnlockDateCheck, legacyUnlockDateCheckStatus, shortenAddress } fr
 
 const HomePage: NextPage = (): JSX.Element => {
   const { address } = useAccount();
-  const [setLatestActionBlock] = useGraphStore(state => [state.setLatestActionBlock]);
+  const [setLatestActionBlock, isLoading] = useGraphStore(state => [state.setLatestActionBlock, state.isLoading]);
 
   const isWalletConnected = isAddress(address as string);
 
@@ -105,7 +105,7 @@ const HomePage: NextPage = (): JSX.Element => {
                       )}
                     </>
                   ) : (
-                    <Button className="w-full" onClick={() => createLegacy()}>
+                    <Button className="w-full" loading={isLoading} onClick={() => createLegacy()}>
                       <span>Deploy Will</span>
                     </Button>
                   )}

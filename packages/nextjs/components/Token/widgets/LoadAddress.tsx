@@ -37,6 +37,7 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
   tokenData,
 }): JSX.Element => {
   const [allotedShare, setAllotedShare] = useState<number>(tokenShare);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
   const { data: ensName } = useEnsName({
     address,
@@ -52,7 +53,9 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
 
   const onSavehandler = async () => {
     if (onSave) {
+      setIsSaving(true);
       await onSave(allotedShare);
+      setIsSaving(false);
     }
 
     onOpenChange(false);
@@ -121,7 +124,7 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
               </div>
             )}
 
-            {allotShare && (
+            {allotShare && !isSaving && (
               <Slider
                 className="mt-5"
                 value={[allotedShare]}
@@ -132,17 +135,19 @@ const LoadAddress: React.FC<LoadAddressProps> = ({
             )}
           </div>
 
-          <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
-            <Icon title="star" />
+          {!isSaving && (
+            <div className="flex items-center justify-center font-bold gap-1 mt-2 text-[#FFC93F]">
+              <Icon title="star" />
 
-            <h6>
-              You have {remainingShare - allotedShare}% {tokenData?.symbol} left to allocate
-            </h6>
-          </div>
+              <h6>
+                You have {remainingShare - allotedShare}% {tokenData?.symbol} left to allocate
+              </h6>
+            </div>
+          )}
         </div>
 
         <DialogFooter className="mt-5">
-          <Button className="w-full" onClick={onSavehandler}>
+          <Button className="w-full" loading={isSaving} onClick={onSavehandler}>
             Save
           </Button>
         </DialogFooter>

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import Beneficiary from "../Beneficiary";
@@ -25,14 +25,20 @@ const DeleteBeneficiary: React.FC<DeleteBeneficiaryProps> = ({
   onOpenChange,
   onConfirm,
 }): JSX.Element => {
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const handleDialogOpenChange = (open: boolean) => {
-    // if (isLoading) return null
+    if (isDeleting) return null;
 
     onOpenChange(open);
   };
 
   const onDeleteHandler = async () => {
+    setIsDeleting(true);
     await onConfirm();
+    await new Promise(resolve => setTimeout(resolve, 4000));
+    setIsDeleting(false);
+
     onOpenChange(false);
   };
 
@@ -88,7 +94,9 @@ const DeleteBeneficiary: React.FC<DeleteBeneficiaryProps> = ({
               Cancel
             </Button>
 
-            <Button onClick={onDeleteHandler}>Delete</Button>
+            <Button onClick={onDeleteHandler} loading={isDeleting}>
+              Delete
+            </Button>
           </div>
         </DialogFooter>
       </DialogContent>

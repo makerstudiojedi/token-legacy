@@ -6,6 +6,7 @@ import "@rainbow-me/rainbowkit/styles.css";
 import NextNProgress from "nextjs-progressbar";
 import { WagmiConfig } from "wagmi";
 import DevAccount from "~~/components/DevAccount";
+import IsMountedWrapper from "~~/components/IsMountedWrapper";
 // import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { Toaster } from "~~/components/ui/toaster";
@@ -45,26 +46,28 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   }, [setNativeCurrencyPrice, price]);
 
   return (
-    <ApolloProvider client={client}>
-      <WagmiConfig config={wagmiConfig}>
-        <NextNProgress />
-        <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
-          <TokenProvider>
-            <div className="flex flex-col min-h-screen">
-              {/* <Header /> */}
-              <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
-                <Component {...pageProps} />
-              </main>
-              {/* <Footer /> */}
-            </div>
-          </TokenProvider>
+    <IsMountedWrapper>
+      <ApolloProvider client={client}>
+        <WagmiConfig config={wagmiConfig}>
+          <NextNProgress />
+          <RainbowKitProvider theme={darkTheme()} chains={appChains.chains} avatar={BlockieAvatar}>
+            <TokenProvider>
+              <div className="flex flex-col min-h-screen">
+                {/* <Header /> */}
+                <main className={cn(inter.variable, darkerGrotesque.variable, "relative flex flex-col flex-1")}>
+                  <Component {...pageProps} />
+                </main>
+                {/* <Footer /> */}
+              </div>
+            </TokenProvider>
 
-          <Toaster />
-          <DevAccount />
-          {/* <Toaster /> */}
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </ApolloProvider>
+            <Toaster />
+            <DevAccount />
+            {/* <Toaster /> */}
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </ApolloProvider>
+    </IsMountedWrapper>
   );
 };
 
