@@ -1,13 +1,12 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import ethereumIcon from "../../../public/ethereum.svg";
 import AddressEditorDialog from "./AddressEditorDialog";
 import { isBefore } from "date-fns";
-import { MaxUint256 } from "ethers";
-import { isAddress } from "ethers";
+import { MaxUint256, isAddress } from "ethers";
 import { formatUnits, getAddress } from "viem";
-import { erc20ABI, useAccount, useBalance, useContractRead, useContractWrite, useToken } from "wagmi";
+import { erc20ABI, useAccount, useContractRead, useContractWrite, useToken } from "wagmi";
 import { BeneficiariesList } from "~~/components/BeneficiariesList";
 import { DonutChart } from "~~/components/DonutChart";
 import Icon from "~~/components/Icons";

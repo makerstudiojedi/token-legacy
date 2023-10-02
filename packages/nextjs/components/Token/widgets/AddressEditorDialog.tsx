@@ -1,6 +1,5 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import addBeneficiaryBg from "../../../public/add-beneficiary-bg.svg";
 import LoadAddress from "./LoadAddress";
 import { isAddress } from "viem";
@@ -45,7 +44,6 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
       setAddress(text);
       setIsLoading(true);
 
-      await new Promise(resolve => setTimeout(resolve, 4000));
       setIsAddressLoaded(true);
     } catch (error) {
       console.error("Failed to read text from clipboard:", error);
@@ -57,6 +55,8 @@ const AddressEditorDialog: React.FC<AddressEditorDialogProps> = ({
   const onSaveHandler = async (amount?: number) => {
     if (onSave) {
       await onSave(address as `0x${string}`, amount || 0);
+
+      await new Promise(resolve => setTimeout(resolve, 4000));
     }
 
     setIsAddressLoaded(false);

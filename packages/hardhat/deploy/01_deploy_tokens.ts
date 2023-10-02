@@ -1,5 +1,5 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -13,7 +13,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const chainId = await hre.getChainId();
 
   const waitConfirmations = chainId === "31337" ? 1 : 5;
-  const testerAddress = "0x44e5b24B7E4527B24E0BFcaEeFdcfA776c4462F0";
+  const testerAddress = "0xc2819DA1172AF484BA5914b196839bd23928070E";
 
   if (chainId === "31337") {
     await deploy("Token", {

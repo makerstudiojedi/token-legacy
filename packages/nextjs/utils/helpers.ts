@@ -100,4 +100,6 @@ export const abbreviateNumber = (value: number): string => {
   }
 
   return (newValue.toString().length > 2 ? newValue.toPrecision(3) : newValue.toPrecision()) + suffixes[suffixNum];
-}
+};
+
+export const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".xyz");
