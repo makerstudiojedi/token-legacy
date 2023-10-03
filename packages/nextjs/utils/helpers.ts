@@ -103,3 +103,11 @@ export const abbreviateNumber = (value: number): string => {
 };
 
 export const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".xyz");
+
+export const shortenNumber = (num: number): string => {
+  if (Number.isInteger(num)) {
+    return num.toString();
+  } else {
+    return num.toFixed(4);
+  }
+};

@@ -16,7 +16,7 @@ import { useTokenAllocationsQuery } from "~~/gql/types.generated";
 import { useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { useGraphMeta } from "~~/hooks/useGraphMeta";
 import { useGraphStore } from "~~/services/store/graphstore";
-import { shortenAddress } from "~~/utils/helpers";
+import { shortenAddress, shortenNumber } from "~~/utils/helpers";
 
 interface TokenDialogProps {
   open: boolean;
@@ -138,7 +138,7 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
 
                   <div className="font-semibold flex items-center gap-2">
                     <span className="text-2xl">{tokenData?.symbol}</span>
-                    <h2 className="text-white">{formattedBalance}</h2>
+                    <h2 className="text-white">{shortenNumber(formattedBalance)}</h2>
                   </div>
                 </div>
 
@@ -210,7 +210,7 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
 
                   <div className="font-semibold flex items-center gap-2">
                     <span className="text-2xl">{tokenData?.symbol}</span>
-                    <h2 className="text-white">{formattedBalance}</h2>
+                    <h2 className="text-white">{shortenNumber(formattedBalance)}</h2>
                   </div>
                 </div>
 
