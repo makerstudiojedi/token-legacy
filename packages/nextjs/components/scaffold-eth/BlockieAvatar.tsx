@@ -1,9 +1,13 @@
-import { AvatarComponent } from "@rainbow-me/rainbowkit";
+import { AvatarComponentProps } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/AvatarContext";
 import Blockies from "react-blockies";
 import { cn } from "~~/lib/utils";
 
+type BlockieProps = AvatarComponentProps & {
+  className?: any;
+};
+
 // Custom Avatar for RainbowKit
-export const BlockieAvatar: AvatarComponent = ({ address, ensImage, size, className }) =>
+export const BlockieAvatar = ({ address, ensImage, size, className }: BlockieProps) =>
   ensImage ? (
     // Don't want to use nextJS Image here (and adding remote patterns for the URL)
     // eslint-disable-next-line

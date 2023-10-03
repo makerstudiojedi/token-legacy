@@ -13,7 +13,6 @@ export const InputBase = <T extends { toString: () => string } | undefined = str
   value,
   onChange,
   placeholder,
-  error,
   disabled,
   prefix,
   suffix,

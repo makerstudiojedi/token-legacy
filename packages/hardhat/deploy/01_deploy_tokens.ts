@@ -13,7 +13,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const chainId = await hre.getChainId();
 
   const waitConfirmations = chainId === "31337" ? 1 : 5;
-  const testerAddress = "0xc2819DA1172AF484BA5914b196839bd23928070E";
+  const testerAddress = "0x0D552416ba81C6C99e1a598A66a9FEf4c2F0B51F";
 
   if (chainId === "31337") {
     await deploy("Token", {

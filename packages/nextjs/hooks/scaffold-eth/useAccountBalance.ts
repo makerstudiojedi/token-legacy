@@ -13,7 +13,7 @@ export function useAccountBalance(address?: string) {
     isError,
     isLoading,
   } = useBalance({
-    address,
+    address: address as `0x${string}`,
     watch: true,
     chainId: getTargetNetwork().id,
   });

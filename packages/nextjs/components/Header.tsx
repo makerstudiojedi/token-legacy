@@ -1,27 +1,27 @@
 import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+// import { useRouter } from "next/router";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
-const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
-  const router = useRouter();
-  const isActive = router.pathname === href;
+// const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+//   const router = useRouter();
+//   const isActive = router.pathname === href;
 
-  return (
-    <Link
-      href={href}
-      passHref
-      className={`${
-        isActive ? "bg-secondary shadow-md" : ""
-      } hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2`}
-    >
-      {children}
-    </Link>
-  );
-};
+//   return (
+//     <Link
+//       href={href}
+//       passHref
+//       className={`${
+//         isActive ? "bg-secondary shadow-md" : ""
+//       } hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2`}
+//     >
+//       {children}
+//     </Link>
+//   );
+// };
 
 /**
  * Site header

@@ -3,7 +3,7 @@ import Image from "next/image";
 import ethereumIcon from "../../public/ethereum.svg";
 import styles from "./Token.module.scss";
 import { formatUnits, isAddress } from "viem";
-import { useAccount, useToken } from "wagmi";
+import { useToken } from "wagmi";
 import { Allocation, LegacyToken } from "~~/gql/types.generated";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { cn } from "~~/lib/utils";
@@ -20,7 +20,7 @@ interface TokenAllocationProps {
 }
 
 const TokenAllocation: React.FC<TokenAllocationProps> = ({ owner, legacy, unlocked, allocation }): JSX.Element => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
   const { setTokenAddress } = useContext(TokenContext);
   const tokenAddress = (allocation.token.token as `0x${string}`) || "";
   const { data } = useToken({
