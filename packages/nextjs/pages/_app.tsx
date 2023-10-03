@@ -20,7 +20,8 @@ import "~~/styles/globals.css";
 import { darkerGrotesque, inter } from "~~/utils/fonts";
 
 const localSubgraph = new HttpLink({
-  uri: "http://localhost:8000/subgraphs/name/ghostffcode/token-legacy",
+  // uri: "http://localhost:8000/subgraphs/name/ghostffcode/token-legacy",
+  uri: "https://api.studio.thegraph.com/query/32278/tokenlegacy/version/latest",
 });
 
 const optimismSubgraph = new HttpLink({

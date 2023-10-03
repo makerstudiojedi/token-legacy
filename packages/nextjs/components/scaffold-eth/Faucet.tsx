@@ -114,7 +114,7 @@ export const Faucet = () => {
               <AddressInput
                 placeholder="Destination Address"
                 value={inputAddress ?? ""}
-                onChange={value => setInputAddress(value)}
+                onChange={value => setInputAddress(value as `0x${string}`)}
               />
               <EtherInput placeholder="Amount to send" value={sendValue} onChange={value => setSendValue(value)} />
               <button

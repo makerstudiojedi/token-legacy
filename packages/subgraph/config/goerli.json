@@ -1,0 +1,6 @@
+{
+  "network": "goerli",
+  "block": 9802113,
+  "LegacyFactory": "0xC48464606394c12FE05aCc1fA1A77B32f1748B27",
+  "LegacyImplementation": "0x6279429aCE113734D53332F9f414D81c3a04e133"
+}

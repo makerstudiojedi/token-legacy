@@ -5,11 +5,11 @@ dataSources:
   # LegacyFactory
   - kind: ethereum/contract
     name: Legacy
-    network: localhost
+    network: goerli
     source:
-      address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+      address: '0xC48464606394c12FE05aCc1fA1A77B32f1748B27'
       abi: LegacyFactory
-      startBlock: 16
+      startBlock: 9802113
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -19,9 +19,9 @@ dataSources:
         - User
       abis:
         - name: LegacyFactory
-          file: ./abis/localhost_LegacyFactory.json
+          file: ./abis/goerli_LegacyFactory.json
         - name: LegacyImplementation
-          file: ./abis/localhost_LegacyImplementation.json
+          file: ./abis/goerli_LegacyImplementation.json
       eventHandlers:
         - event: LegacyCreated(indexed address,indexed address)
           handler: handleLegacyCreated
@@ -31,7 +31,7 @@ templates:
   # LegacyImplementation
   - kind: ethereum/contract
     name: LegacyImplementation
-    network: localhost
+    network: goerli
     source:
       abi: LegacyImplementation
     mapping:
@@ -45,7 +45,7 @@ templates:
         - Allocation
       abis:
         - name: LegacyImplementation
-          file: ./abis/localhost_LegacyImplementation.json
+          file: ./abis/goerli_LegacyImplementation.json
       eventHandlers:
         - event: WillAdded(indexed address,address,uint256)
           handler: handleWillAdded
