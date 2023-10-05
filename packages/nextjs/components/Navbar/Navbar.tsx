@@ -47,6 +47,7 @@ const Navbar: React.FC = (): JSX.Element => {
     onBlockConfirmation: async txReceipt => {
       setLatestActionBlock(Number(txReceipt.blockNumber));
     },
+    onSettled: async () => setIsLoading(false),
   });
 
   const { data: legacyData } = useFetchLegacyQuery({
@@ -73,10 +74,7 @@ const Navbar: React.FC = (): JSX.Element => {
     setIsLoading(true);
 
     try {
-      // await new Promise(resolve => setTimeout(resolve, 4000));
       await updateReleaseDate({ args: [BigInt(newDate.getTime() / 1000)] });
-      // routerNavigation.refresh();
-      // router.push("/wallet")
 
       toast({
         variant: "default",
@@ -90,8 +88,6 @@ const Navbar: React.FC = (): JSX.Element => {
         description: "An error occured. Please try again.",
       });
     }
-
-    setIsLoading(false);
   };
 
   return (
