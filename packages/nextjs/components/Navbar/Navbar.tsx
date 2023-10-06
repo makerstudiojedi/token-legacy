@@ -52,6 +52,12 @@ const Navbar: React.FC = (): JSX.Element => {
       });
     },
     onSettled: async () => setIsLoading(false),
+    onError: async () => {
+      toast({
+        variant: "destructive",
+        description: "An error occured. Please try again.",
+      });
+    },
   });
 
   const { data: legacyData } = useFetchLegacyQuery({
@@ -79,11 +85,6 @@ const Navbar: React.FC = (): JSX.Element => {
 
     try {
       await updateReleaseDate({ args: [BigInt(newDate.getTime() / 1000)] });
-
-      toast({
-        variant: "default",
-        description: "A new release date has been set successfully",
-      });
     } catch (error) {
       setIsLoading(false);
 
