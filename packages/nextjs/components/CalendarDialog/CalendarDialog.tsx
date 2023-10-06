@@ -8,6 +8,8 @@ interface CalendarDialogProps {
   onApplyDate: (value: Date | undefined) => Promise<void>;
   children: React.ReactNode;
   isLoading: boolean;
+  open: boolean;
+  onClose: (open: boolean) => void;
 }
 
 const CalendarDialog: React.FC<CalendarDialogProps> = ({
@@ -15,24 +17,25 @@ const CalendarDialog: React.FC<CalendarDialogProps> = ({
   onApplyDate,
   children,
   isLoading,
+  open,
+  onClose,
 }): JSX.Element => {
   const [date, setDate] = useState<Date | undefined>(currentDate);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [allowApply, setAllowApply] = useState<boolean>(true);
 
   const handleDialogOpenChange = (open: boolean) => {
-    setIsDialogOpen(open);
+    onClose(open);
     setDate(currentDate);
   };
 
   const handleApplyDate = async () => {
     await onApplyDate(date);
-    setIsDialogOpen(false);
+    onClose(false);
   };
 
   return (
     <>
-      <Dialog open={isDialogOpen} onOpenChange={open => handleDialogOpenChange(open)}>
+      <Dialog open={open} onOpenChange={open => handleDialogOpenChange(open)}>
         <DialogTrigger>{children}</DialogTrigger>
 
         <DialogContent className="sm:max-w-[350px] gap-6 select-none">
