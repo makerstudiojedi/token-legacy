@@ -26,6 +26,7 @@ interface TokenDialogProps {
 
 const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }): JSX.Element => {
   const [isAddBeneficiaryDialogOpen, setIsAddBeneficiaryDialogOpen] = useState<boolean>(false);
+  const [isIncreaseTxLoading, setIsIncreaseTxLoading] = useState(false);
   const [setLatestActionBlock] = useGraphStore(state => [state.setLatestActionBlock]);
   const router = useRouter();
   const { address: _loggedInUser } = useAccount();
@@ -78,11 +79,12 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
     watch: true,
   });
 
-  const { write: increaseAllowance, isLoading: isIncreaseTxLoading } = useContractWrite({
+  const { write: increaseAllowance } = useContractWrite({
     address: token,
     abi: erc20ABI,
     functionName: "approve",
     args: [legacyAddress, MaxUint256],
+    onSettled: async () => setIsIncreaseTxLoading(false),
   });
 
   const { writeAsync: allocateTokenToUser } = useScaffoldContractWrite({
@@ -94,6 +96,7 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
       setLatestActionBlock(Number(txReceipt.blockNumber));
     },
   });
+
   const { writeAsync: sendWithdrawalTransaction } = useScaffoldContractWrite({
     contractName: "LegacyImplementation",
     functionName: "withdraw",
@@ -223,7 +226,14 @@ const TokenDialog: React.FC<TokenDialogProps> = ({ open, token, onOpenChange }):
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button className="w-full" loading={isIncreaseTxLoading} onClick={() => increaseAllowance()}>
+                  <Button
+                    className="w-full"
+                    loading={isIncreaseTxLoading}
+                    onClick={async () => {
+                      setIsIncreaseTxLoading(true);
+                      increaseAllowance();
+                    }}
+                  >
                     Increase Allowance
                   </Button>
                 </DialogFooter>
