@@ -24,6 +24,7 @@ const Navbar: React.FC = (): JSX.Element => {
 
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isCalendarDialogOpen, setIsCalendarDialogOpen] = useState<boolean>(false);
 
   const { address } = useAccount();
   const { openAccountModal } = useAccountModal();
@@ -124,7 +125,13 @@ const Navbar: React.FC = (): JSX.Element => {
           </li>
 
           <li>
-            <CalendarDialog currentDate={date} onApplyDate={onSaveDateHandler} isLoading={isLoading}>
+            <CalendarDialog
+              currentDate={date}
+              onApplyDate={onSaveDateHandler}
+              isLoading={isLoading}
+              open={isCalendarDialogOpen}
+              onClose={open => setIsCalendarDialogOpen(open)}
+            >
               <Icon title="stop-watch" />
             </CalendarDialog>
           </li>
