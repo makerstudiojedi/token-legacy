@@ -46,6 +46,10 @@ const Navbar: React.FC = (): JSX.Element => {
     args: [0n],
     onBlockConfirmation: async txReceipt => {
       setLatestActionBlock(Number(txReceipt.blockNumber));
+      toast({
+        variant: "default",
+        description: "A new release date has been set successfully",
+      });
     },
   });
 
@@ -77,11 +81,6 @@ const Navbar: React.FC = (): JSX.Element => {
       await updateReleaseDate({ args: [BigInt(newDate.getTime() / 1000)] });
       // routerNavigation.refresh();
       // router.push("/wallet")
-
-      toast({
-        variant: "default",
-        description: "A new release date has been set successfully",
-      });
     } catch (error) {
       setIsLoading(false);
 
