@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "~~/component
 
 interface CalendarDialogProps {
   currentDate: Date | undefined;
-  onApplyDate: (value: Date | undefined) => void;
+  onApplyDate: (value: Date | undefined) => Promise<void>;
   children: React.ReactNode;
   isLoading: boolean;
 }
@@ -25,8 +25,8 @@ const CalendarDialog: React.FC<CalendarDialogProps> = ({
     setDate(currentDate);
   };
 
-  const handleApplyDate = () => {
-    onApplyDate(date);
+  const handleApplyDate = async () => {
+    await onApplyDate(date);
     setIsDialogOpen(false);
   };
 

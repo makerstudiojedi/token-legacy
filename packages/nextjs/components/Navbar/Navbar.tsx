@@ -46,6 +46,10 @@ const Navbar: React.FC = (): JSX.Element => {
     args: [0n],
     onBlockConfirmation: async txReceipt => {
       setLatestActionBlock(Number(txReceipt.blockNumber));
+      toast({
+        variant: "default",
+        description: "A new release date has been set successfully",
+      });
     },
     onSettled: async () => setIsLoading(false),
   });
